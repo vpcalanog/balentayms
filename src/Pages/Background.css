@@ -1,0 +1,39 @@
+.background{
+    overflow: hidden;
+    position: fixed;
+    z-index: 0;
+}
+.layer{
+    margin: 40px 0;
+}
+.layer:first-child{
+    margin-left: -10vw;
+    margin-top: -25px;
+}
+.layer:nth-child(2n){
+    margin-left: -54vw;
+}
+.layer:nth-child(3n){
+    margin-left: -20vw;
+}
+.layer:nth-child(4n){
+    margin-left: -33vw;
+}
+.layer:nth-child(5n){
+    margin-left: -48vw;
+}
+.layer:nth-child(6n){
+    margin-left: -10vw;
+}
+.layer:nth-child(7n){
+    margin-left: -53vw;
+}
+.layer:nth-child(8n){
+    margin-left: -14vw;
+}
+.layer:nth-child(9n){
+    margin-left: -36w;
+}
+.layer:nth-child(10n){
+    margin-left: -15vw;
+}

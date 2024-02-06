@@ -1,0 +1,50 @@
+.container{
+    width: 300vw;
+    display: flex;
+    overflow: hidden;
+}
+.heart{
+    width: 10vw;
+    margin: 10px;
+}
+
+.heart:nth-child(2n){
+    width: 8vw;
+    animation-delay: 1.5s;
+}
+
+.heart:nth-child(3n){
+    width: 20vw;
+    padding-bottom: 6px;
+    animation-delay: 1s;
+}
+.heart:nth-child(3n-1){
+    width: 15vw;
+    animation-delay: 0.5s;
+}
+
+@keyframes pulse {
+    0%, 100% {
+      transform: scale(0.8);
+    }
+    25% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    75% {
+      transform: scale(0.9);
+    }
+}
+
+.heart {
+  animation: pulse 2.5s infinite;
+}
+
+@media screen and (min-width: 601px) {
+    .container{
+        margin-top: -8vh;
+        width: 180vw;
+    }
+}
