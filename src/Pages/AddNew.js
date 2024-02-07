@@ -32,28 +32,11 @@ export function AddNew() {
     canvasIndex.current = canvasHistory.current.length - 1;
   };
 
-  const handleUndo = () => {
-    if (canvasIndex.current > 0) {
-      canvasIndex.current--;
-      loadCanvasState(canvasRef.current, canvasHistory.current[canvasIndex.current]);
-    }
-  };
-
-  const loadCanvasState = (canvas, jsonData) => {
-    canvas.loadFromJSON(jsonData, () => {
-      canvas.renderAll();
-    });
-  };
-
   return (
     <>
       <div className='content'>
         <Canvas/>
-        {/* <canvas ref={canvasRef} width={800} height={600} /> */}
       </div>
-      {/* <button className='undo' onClick={handleUndo}>
-        Undo
-      </button> */}
       <Link to='/'>
         <button className='back'>Go Back</button>
       </Link>
