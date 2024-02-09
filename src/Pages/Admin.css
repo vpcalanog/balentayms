@@ -1,0 +1,67 @@
+.cards{
+    display: block;
+}
+
+button{
+    background: none;
+    border: 0;
+}
+button:hover{
+    background: none;
+    border: 0;
+}
+.active,
+.inactive{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 8vw;
+    height: 5vh;
+    margin: auto;
+    border-radius: 25px;
+    font-weight: 700;
+    color: #ffffff;
+}
+.active{
+    background: #00ad0e;
+    border: 2px solid #008d0c;
+}
+.active:hover{
+    background: #00ad0e7c;
+    border: 2px solid #008d0c7e;
+}
+.inactive{
+    border: 2px solid #e41e3f;
+    background: #cf0023;
+}
+.inactive:hover{
+    border: 2px solid #e41e3f7a;
+    background: #cf002377;
+}
+.log-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50vw;
+    height: 50vh;
+}
+.log-form input{
+    width: 20vw;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 0;
+    border-radius: 25px;
+}
+.login{
+    padding: 10px;
+    border: 2px solid #e41e3f;
+    border-radius: 25px;
+    background: #cf0023;
+    color: #ffffff;
+}
+.login:hover{
+    border: 2px solid #e41e3f;
+    background: #ffffff;
+    color: #cf0023;
+}
