@@ -42,9 +42,19 @@
   animation: pulse 2.5s infinite;
 }
 
-@media screen and (min-width: 601px) {
+@media screen and (max-width: 600px) {
     .container{
+        flex-direction: row;
         margin-top: -8vh;
-        width: 180vw;
+        width: 400vw;
+    }
+    .layer{
+      display: flex;
+      flex-direction: row;
+      height: 100px;
+    }
+    .layer svg{
+      height: auto;
+      width: auto;
     }
 }

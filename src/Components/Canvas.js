@@ -123,8 +123,8 @@ export default function Canvas() {
       const screenWidth = window.innerWidth;
 
       if (screenWidth < 600) {
-        image.scaleToWidth(400);
-        image.scaleToHeight(400);
+        image.scaleToWidth(470);
+        image.scaleToHeight(470);
       }
 
       editor.canvas.setBackgroundImage(
@@ -246,7 +246,7 @@ export default function Canvas() {
   };
 
   return (
-    <div className="canvas container">
+    <div className="canvas">
       <div className="side">
         <div className="controls">
           <button onClick={addText}>

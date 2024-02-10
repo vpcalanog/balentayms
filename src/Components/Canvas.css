@@ -1,8 +1,9 @@
 
-.container{
+.canvas{
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
 }
 .side{
     width: 10vw;
@@ -69,6 +70,7 @@
 }
 .info{
     position: fixed;
+    z-index: 3;
     top: 0;
     right: 0;
     margin: 20px 20px 0 0;
@@ -82,7 +84,7 @@
     stroke: #ffffff;
 }
 .info:hover{
-    border: 2px solid #ffffff;
+    border: 2px solid #e41e3f;
     background: #ffffff;
     fill: #e41e3f;
     stroke: #e41e3f;
@@ -110,26 +112,51 @@
 .modal p:nth-child(2n){
     text-indent: 20px;
 }
-
-@media screen and (max-width: 600px) {
-    .container{
+@media screen and (max-width: 400px) {
+    .canvas{
         flex-direction: column;
     }
-    .center,.canvas-container{
-        height: 50vh;
-        display: flex;
-        justify-content: center;
-    }
     .sample-canvas,
-    .canvas-container,
+    .canvas-container{
+        height: 300px!important;
+        width: 300px!important;
+    }
     .lower-canvas,
     .upper-canvas{
         margin: auto!important;
-        height: 400px!important;
-        width: 400px!important;
+        height: 300px!important;
+        width: 300px!important;
     }
     .side{
         flex-direction: row;
         gap: 20px;
+        padding: 10px 0;
+    }
+    .modal{
+        font-size: 0.9rem;
+    }
+}
+@media screen and (min-width: 401px) and (max-width: 600px) {
+    .canvas{
+        flex-direction: column;
+    }
+    .sample-canvas,
+    .canvas-container{
+        height: 340px!important;
+        width: 340px!important;
+    }
+    .lower-canvas,
+    .upper-canvas{
+        margin: auto!important;
+        height: 340px!important;
+        width: 340px!important;
+    }
+    .side{
+        flex-direction: row;
+        gap: 20px;
+        padding: 10px 0;
+    }
+    .modal{
+        font-size: 0.9rem;
     }
 }
