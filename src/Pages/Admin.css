@@ -65,3 +65,13 @@ button:hover{
     background: #ffffff;
     color: #cf0023;
 }
+
+@media screen and (max-width: 600px) {
+    .active,
+    .inactive{
+        width: 30vw;
+    }
+    .log-form input{
+        width: 60vw;
+    }
+}

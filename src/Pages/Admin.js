@@ -11,93 +11,130 @@ export function Admin(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [session, setSession] = useState(null)
+    const [isSignUp, setIsSignUp] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleSignIn = async () => {
         const { user, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+            email,
+            password,
         });
-    
+
         if (error) {
-          console.error(error);
+            console.error(error);
         } else {
-          console.log('Signed in successfully:', user);
-          setSession(true);
+            console.log('Signed in successfully:', email);
+            setSession(true);
         }
-      };
+    };
+
+    const handleSignUp = async () => {
+        if (password !== confirmPassword) {
+            console.error("Passwords do not match");
+            return;
+        }
+
+        const { user, error } = await supabase.auth.signUp({
+            email,
+            password,
+        });
+
+        if (error) {
+            alert(error);
+        } else {
+            alert('Signed up successfully:');
+            setSession(true);
+        }
+    };
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
         setSession(null);
     };
 
-    async function getImages(){
+    async function getImages() {
         const { data, error } = await supabase
             .from('admin')
             .select('*')
             .order('id', { ascending: false });
 
-            if(data!== null) {
-              setImages(data);
-            }else{
-              alert(error);
-            }
+        if (data !== null) {
+            setImages(data);
+        } else {
+            alert(error);
+        }
     }
 
     useEffect(() => {
         getImages()
-    },[])
+    }, [])
 
-    async function changeStatus(){
+    async function changeStatus() {
         const { data, error } = await supabase
             .from('admin')
             .update({
                 name: update.name,
                 status: !update.status,
+                changed_by: email,
             })
-            .eq('id',update.id)
+            .eq('id', update.id)
             .select()
 
-        if(data){
+        if (data) {
             getImages();
             console.log('status changed');
-        }else{
+        } else {
             console.log(error);
         }
     }
 
     useEffect(() => {
         changeStatus();
-    },[update])
+    }, [update])
 
     return (
         <>
             <div className='content'>
                 {session !== null
-                ?
-                <>
-                    {images.map((image) => {
-                        return(
-                            <div className='cards'>
-                                <img className='notes' src={CDNURL + image.name}/>
-                                <br/>
-                                {image.status === true
-                                ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
-                                : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
-                            </div>
-                        )
-                    })}
-                </>
-                :
-                <>
-                    <div className='log-form'>
-                        <label>Email:</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        <label>Password:</label>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button className='login' onClick={handleSignIn}>Sign In</button>
-                    </div>
-                </>
+                    ?
+                    <>
+                        {images.map((image) => {
+                            return (
+                                <div className='cards' key={image.id}>
+                                    <img className='notes' src={CDNURL + image.name} alt={image.name} />
+                                    <br />
+                                    {image.status === true
+                                        ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
+                                        : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
+                                </div>
+                            )
+                        })}
+                    </>
+                    :
+                    <>
+                        <div className='log-form'>
+                            {isSignUp
+                                ? <>
+                                    <label>Email:</label>
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <label>Password:</label>
+                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <label>Confirm Password:</label>
+                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                                    <button className='login' onClick={handleSignUp}>Sign Up</button>
+                                    <p>Already have an account? <span onClick={() => setIsSignUp(false)}>Sign In</span></p>
+                                </>
+                                : <>
+                                    <label>Email:</label>
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <label>Password:</label>
+                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <button className='login' onClick={handleSignIn}>Sign In</button>
+                                    <p>Don't have an account? <span onClick={() => setIsSignUp(true)}>Sign Up</span></p>
+                                </>
+                            }
+                        </div>
+                    </>
                 }
             </div>
             <Link to='/'>

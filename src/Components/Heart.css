@@ -3,9 +3,14 @@
     display: flex;
     overflow: hidden;
 }
+.layer{
+  display: flex;
+  flex-direction: row;
+  height: 200px;
+}
 .heart{
     width: 10vw;
-    margin: 10px;
+    margin: -4vh 10px;
 }
 
 .heart:nth-child(2n){
@@ -42,7 +47,7 @@
   animation: pulse 2.5s infinite;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1366px) {
     .container{
         flex-direction: row;
         margin-top: -8vh;
