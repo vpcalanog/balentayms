@@ -116,40 +116,21 @@ export default function Canvas() {
     if (!editor || !fabric) {
       return;
     }
-  
+
     const templateImagePath = require("./Template.png");
-  
-    const resizeImage = (img) => {
-      const canvasWidth = window.innerWidth < 600 ? window.innerWidth - 20 : 500;
-      const canvasHeight = canvasWidth * (img.height / img.width);
-  
-      editor.canvas.setWidth(canvasWidth);
-      editor.canvas.setHeight(canvasHeight);
+
+    fabric.Image.fromURL(templateImagePath, (image) => {
+      const screenWidth = window.innerWidth;
+
+      if (screenWidth < 600) {
+        image.scaleToWidth(400);
+        image.scaleToHeight(400);
+      }
+
       editor.canvas.setBackgroundImage(
-        img,
+        image,
         editor.canvas.renderAll.bind(editor.canvas)
       );
-      editor.canvas.renderAll();
-    };
-  
-    fabric.Image.fromURL(templateImagePath, (image) => {
-      if (window.innerWidth < 600) {
-        const tempCanvas = new fabric.Canvas();
-        tempCanvas.setWidth(500); // Use a temporary canvas with a fixed width for resizing
-        tempCanvas.setHeight(500 * (image.height / image.width));
-        tempCanvas.setBackgroundImage(
-          image,
-          tempCanvas.renderAll.bind(tempCanvas)
-        );
-        const resizedImage = tempCanvas.toDataURL({ format: 'png' });
-        const newImage = new fabric.Image();
-        newImage.setElement(document.createElement('img'));
-        newImage.setSrc(resizedImage, () => {
-          resizeImage(newImage);
-        });
-      } else {
-        resizeImage(image);
-      }
     });
   };
 

@@ -115,8 +115,18 @@
     .container{
         flex-direction: column;
     }
-    .center{
+    .center,.canvas-container{
         height: 50vh;
+        display: flex;
+        justify-content: center;
+    }
+    .sample-canvas,
+    .canvas-container,
+    .lower-canvas,
+    .upper-canvas{
+        margin: auto!important;
+        height: 400px!important;
+        width: 400px!important;
     }
     .side{
         flex-direction: row;
