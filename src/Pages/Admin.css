@@ -65,6 +65,35 @@ button:hover{
     background: #ffffff;
     color: #cf0023;
 }
+.signIn{
+    text-decoration: underline;
+    color: blue;
+}
+.signIn:hover{
+    color: gray;
+}
+
+.info{
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    margin: 20px 20px 0 0;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    border: 2px solid #e41e3f;
+    background: #f33e59be;
+    fill: #ffffff;
+    stroke: #ffffff;
+}
+.info:hover{
+    border: 2px solid #e41e3f;
+    background: #ffffff;
+    fill: #e41e3f;
+    stroke: #e41e3f;
+}
 
 @media screen and (max-width: 600px) {
     .active,

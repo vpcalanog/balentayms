@@ -109,6 +109,11 @@ export function Admin(props) {
                                 </div>
                             )
                         })}
+                        <button className='info' onClick={getImages}>
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.7 7.7A7.1 7.1 0 0 0 5 10.8M18 4v4h-4m-7.7 8.3A7.1 7.1 0 0 0 19 13.2M6 20v-4h4"/>
+                        </svg>
+                        </button>
                     </>
                     :
                     <>
@@ -122,7 +127,7 @@ export function Admin(props) {
                                     <label>Confirm Password:</label>
                                     <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                                     <button className='login' onClick={handleSignUp}>Sign Up</button>
-                                    <p>Already have an account? <span onClick={() => setIsSignUp(false)}>Sign In</span></p>
+                                    <p>Already have an account? <span className='signIn' onClick={() => setIsSignUp(false)}>Sign In</span></p>
                                 </>
                                 : <>
                                     <label>Email:</label>
