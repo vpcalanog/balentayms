@@ -37,3 +37,6 @@
 .layer:nth-child(10n){
     margin-left: -15vw;
 }
+
+@media screen and (max-width: 600px) {
+}

@@ -3,7 +3,7 @@ import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { v4 as uuidv4 } from "uuid";
-import './Canvas.css'
+import './Canvas.css';
 
 export default function Canvas() {
   const { editor, onReady } = useFabricJSEditor();
@@ -12,7 +12,6 @@ export default function Canvas() {
   const [color, setColor] = useState("#35363a");
   const [active, setActive] = useState(false);
   const [size, setSize] = useState('');
-  const [cropImage, setCropImage] = useState(true);
   const supabase = useSupabaseClient();
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -60,11 +59,6 @@ export default function Canvas() {
 
   useEffect(() => {
     if (!editor || !fabric) {
-      return;
-    }
-
-    if (cropImage) {
-      editor.canvas.__eventListeners = {};
       return;
     }
 
@@ -116,20 +110,46 @@ export default function Canvas() {
     }
 
     editor.canvas.renderAll();
-  }, [editor, cropImage]);
+  }, [editor]);
 
   const addBackground = () => {
     if (!editor || !fabric) {
       return;
     }
-
+  
     const templateImagePath = require("./Template.png");
-
-    fabric.Image.fromURL(templateImagePath, (image) => {
+  
+    const resizeImage = (img) => {
+      const canvasWidth = window.innerWidth < 600 ? window.innerWidth - 20 : 500;
+      const canvasHeight = canvasWidth * (img.height / img.width);
+  
+      editor.canvas.setWidth(canvasWidth);
+      editor.canvas.setHeight(canvasHeight);
       editor.canvas.setBackgroundImage(
-        image,
+        img,
         editor.canvas.renderAll.bind(editor.canvas)
       );
+      editor.canvas.renderAll();
+    };
+  
+    fabric.Image.fromURL(templateImagePath, (image) => {
+      if (window.innerWidth < 600) {
+        const tempCanvas = new fabric.Canvas();
+        tempCanvas.setWidth(500); // Use a temporary canvas with a fixed width for resizing
+        tempCanvas.setHeight(500 * (image.height / image.width));
+        tempCanvas.setBackgroundImage(
+          image,
+          tempCanvas.renderAll.bind(tempCanvas)
+        );
+        const resizedImage = tempCanvas.toDataURL({ format: 'png' });
+        const newImage = new fabric.Image();
+        newImage.setElement(document.createElement('img'));
+        newImage.setSrc(resizedImage, () => {
+          resizeImage(newImage);
+        });
+      } else {
+        resizeImage(image);
+      }
     });
   };
 
@@ -247,65 +267,81 @@ export default function Canvas() {
   return (
     <div className="canvas container">
       <div className="side">
-        <button onClick={addText}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 8 8" id="text"><path d="M0 0v2h.5c0-.55.45-1 1-1H3v5.5c0 .28-.22.5-.5.5H2v1h4V7h-.5c-.28 0-.5-.22-.5-.5V1h1.5c.55 0 1 .45 1 1H8V0H0z"></path></svg>
-        </button>
-        <label>Add Text</label>
-        <button onClick={toggleDraw}>
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
-          </svg>
-        </button>
-        <label>Toggle Draw</label>
-        <button onClick={toggleSize}>
-          {size === 'large'
-          ?
-          <svg className="large" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
-          </svg>
-          :
-          <svg className="small" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
-          </svg>
-          }
-          
-        </button>
-        <label>Pen Size</label>
-        <input
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          />
+        <div className="controls">
+          <button onClick={addText}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 8 8" id="text"><path d="M0 0v2h.5c0-.55.45-1 1-1H3v5.5c0 .28-.22.5-.5.5H2v1h4V7h-.5c-.28 0-.5-.22-.5-.5V1h1.5c.55 0 1 .45 1 1H8V0H0z"></path></svg>
+          </button>
+          <label>Add Text</label>
+        </div>
+        <div className="controls">
+          <button onClick={toggleDraw}>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
+            </svg>
+          </button>
+          <label>Toggle Draw</label>
+        </div>
+        <div className="controls">
+          <button onClick={toggleSize}>
+            {size === 'large'
+            ?
+            <svg className="large" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
+            </svg>
+            :
+            <svg className="small" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
+            </svg>
+            }
+            
+          </button>
+          <label>Pen Size</label>
+        </div>
+        <div className="controls">
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            />
         <label>Select Color</label>
+        </div>
       </div>
       <div className="center">
         <FabricJSCanvas className="sample-canvas" onReady={onReady} />
       </div>
       <div className="side">
-        <button onClick={undo}>
-        <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/>
-        </svg>
-        </button>
-        <label>Undo</label>
-        <button onClick={redo}>
-          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 9H8a5 5 0 0 0 0 10h9m4-10-4-4m4 4-4 4"/>
+        <div className="controls">
+          <button onClick={undo}>
+          <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/>
           </svg>
-        </button>
-        <label>Redo</label>
-        <button onClick={clear}>
-          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
-          </svg>      
-        </button>
-        <label>Clear Canvas</label>
-        <button onClick={saveToImage}>
-          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 12 4.7 4.5 9.3-9"/>
-          </svg>
-        </button>
-      <label>Submit</label>
+          </button>
+          <label>Undo</label>
+        </div>
+        <div className="controls">
+          <button onClick={redo}>
+            <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 9H8a5 5 0 0 0 0 10h9m4-10-4-4m4 4-4 4"/>
+            </svg>
+          </button>
+          <label>Redo</label>
+        </div>
+        <div className="controls">
+          <button onClick={clear}>
+            <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
+            </svg>      
+          </button>
+          <label>Clear</label>
+        </div>
+        <div className="controls">
+          <button onClick={saveToImage}>
+            <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 12 4.7 4.5 9.3-9"/>
+            </svg>
+          </button>
+          <label>Submit</label>
+        </div>
       </div>
       <input
         ref={fileInputRef}

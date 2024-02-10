@@ -1,9 +1,9 @@
+
 .container{
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
 .side{
     width: 10vw;
     display: flex;
@@ -11,12 +11,10 @@
     justify-content: center;
     align-items: center;
 }
-
 .side label{
     color: #e41e3f;
     font-weight: bolder;
 }
-
 .side input,
 .side button{
     margin: 20px 0 0 0;
@@ -56,6 +54,12 @@
 .side path{
     fill: inherit;
     stroke: inherit;
+}
+.controls{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 .large{
     scale: 1.1;
@@ -105,4 +109,17 @@
 }
 .modal p:nth-child(2n){
     text-indent: 20px;
+}
+
+@media screen and (max-width: 600px) {
+    .container{
+        flex-direction: column;
+    }
+    .center{
+        height: 50vh;
+    }
+    .side{
+        flex-direction: row;
+        gap: 20px;
+    }
 }
