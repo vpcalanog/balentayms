@@ -40,3 +40,20 @@
 .notes{
     width: 15vw;
 }
+
+@media screen and (max-width: 600px) {
+    .content{
+        gap: 5vw;
+    }
+    .add{
+        width: 30vw;
+    }
+    .notes{
+        width: 30vw;
+    }
+    ::-webkit-scrollbar
+    {
+        width: 6px;
+        background-color: #f5f5f500;
+    }
+}
