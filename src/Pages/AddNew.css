@@ -32,23 +32,3 @@
     background: #ffffff;
     color: #f33e58;
 }
-
-.undo{
-    width: 8vw;
-    height: 5vh;
-    position: fixed;
-    z-index: 2;
-    bottom: 10%;
-    border-radius: 25px;
-    border: 2px solid #e41e3f;
-    background: #f33e59be;
-    color: #ffffff;
-    font-weight: 700;
-}
-.undo:hover{
-    border: 2px solid #ffffff;
-    background: #ffffff;
-    color: #f33e58;
-}
-
-/* colors = ['#7030A2', '#000000', '#0170C1', '#FE0002', '#FFFF01', '#00AF52'] */

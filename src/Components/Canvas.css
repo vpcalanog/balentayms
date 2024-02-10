@@ -29,15 +29,80 @@
     fill: #ffffff;
     stroke: #ffffff;
 }
-
+.side input:hover,
+.side button:hover{
+    border: 2px solid #ffffff;
+    background: #ffffff;
+    fill: #e41e3f;
+    stroke: #e41e3f;
+}
 .side input:hover,button:hover{
     border: 2px solid #ffffff;
     background: #ffffff;
     fill: #f33e58;
     stroke: #f33e58;
 }
-
+.side input{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+}
+.side input::-webkit-color-swatch{
+    border-radius: 25px;
+}
 .side path{
     fill: inherit;
     stroke: inherit;
+}
+.large{
+    scale: 1.1;
+}
+.small{
+    scale: 0.7;
+}
+.info{
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 20px 20px 0 0;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    border: 2px solid #e41e3f;
+    background: #f33e59be;
+    fill: #ffffff;
+    stroke: #ffffff;
+}
+.info:hover{
+    border: 2px solid #ffffff;
+    background: #ffffff;
+    fill: #e41e3f;
+    stroke: #e41e3f;
+}
+.modal{
+    position: fixed;
+    margin-top: 10px;
+    padding: 20px;
+    z-index: 2;
+    border-radius: 25px;
+    width: 70vw;
+    height: 70vh;
+    background: #ffffff;
+    text-align: left;
+    color: #e41e3f;
+    font-size: 1.2rem;
+}
+.modal h1{
+    text-align: center;
+    font-weight: 900;
+}
+.modal p:nth-child(2n-1){
+    font-weight: 700;
+}
+.modal p:nth-child(2n){
+    text-indent: 20px;
 }

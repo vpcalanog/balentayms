@@ -5,6 +5,7 @@ import { Background } from './Background';
 import { Content } from './Content';
 import { AddNew } from './AddNew';
 import { Admin } from './Admin';
+import bitmap from '../bitmap.png';
 
 const Main = () => {
   return (
@@ -15,6 +16,7 @@ const Main = () => {
         <Route path="/additional" element={<AddNew/>} />
         <Route path='/administrasyones' element={<Admin/>} />
       </Routes>
+      <img src={bitmap} alt='FACTS Logo' className='logo'/>
     </>
   );
 };

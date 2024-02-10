@@ -10,8 +10,53 @@ export default function Canvas() {
   const fileInputRef = useRef(null);
   const history = [];
   const [color, setColor] = useState("#35363a");
+  const [active, setActive] = useState(false);
+  const [size, setSize] = useState('');
   const [cropImage, setCropImage] = useState(true);
   const supabase = useSupabaseClient();
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (editor && editor.canvas) {
+        if (event.ctrlKey && event.key === 'z') {
+          undo();
+        } else if ((event.ctrlKey && event.key === 'y') || (event.ctrlKey && event.shiftKey && event.key === 'Z')) {
+          redo();
+        }else if(event.shiftKey && event.key === 'T'){
+          addText();
+        }else if(event.ctrlKey && event.key === 'c'){
+          toggleDraw();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    
+  }, [editor]);
+  useEffect(() => {
+    const handleAuxClick = (event) => {
+      if (editor && editor.canvas) {
+        if (event.button === 1) {
+          toggleSize();
+        }
+      }
+    };
+
+    document.addEventListener('auxclick', handleAuxClick);
+
+    return () => {
+      document.removeEventListener('auxclick', handleAuxClick);
+    };
+  }, [editor]);
+
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
+  };
 
   useEffect(() => {
     if (!editor || !fabric) {
@@ -99,9 +144,13 @@ export default function Canvas() {
   }, [editor?.canvas.backgroundImage]);
 
   const toggleSize = () => {
-    editor.canvas.freeDrawingBrush.width === 12
-      ? (editor.canvas.freeDrawingBrush.width = 5)
-      : (editor.canvas.freeDrawingBrush.width = 12);
+    if(editor.canvas.freeDrawingBrush.width === 10){
+      (editor.canvas.freeDrawingBrush.width = 1)
+      setSize('small');
+    }else{
+      (editor.canvas.freeDrawingBrush.width = 10);
+      setSize('large')
+    }
   };
 
   useEffect(() => {
@@ -114,6 +163,7 @@ export default function Canvas() {
 
   const toggleDraw = () => {
     editor.canvas.isDrawingMode = !editor.canvas.isDrawingMode;
+    setActive(!active);
   };
 
   const undo = () => {
@@ -202,15 +252,23 @@ export default function Canvas() {
         </button>
         <label>Add Text</label>
         <button onClick={toggleDraw}>
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
           </svg>
         </button>
         <label>Toggle Draw</label>
         <button onClick={toggleSize}>
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M5 3a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1v3a1 1 0 1 1-2 0v-3h-1v3a1 1 0 1 1-2 0v-3h-1v3a1 1 0 1 1-2 0v-3H7a1 1 0 1 1 0-2h3v-1H7a1 1 0 1 1 0-2h3V8H7a1 1 0 0 1 0-2h3V5a2 2 0 0 0-2-2H5Z" clip-rule="evenodd"/>
+          {size === 'large'
+          ?
+          <svg className="large" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
           </svg>
+          :
+          <svg className="small" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M14 4.2a4.1 4.1 0 0 1 5.8 0 4 4 0 0 1 0 5.7l-1.3 1.3-5.8-5.7L14 4.2Zm-2.7 2.7-5.1 5.2 2.2 2.2 5-5.2-2.1-2.2ZM5 14l-2 5.8c0 .3 0 .7.3 1 .3.3.7.4 1 .2l6-1.9L5 13.8Zm7 4 5-5.2-2.1-2.2-5.1 5.2 2.2 2.1Z" clip-rule="evenodd"/>
+          </svg>
+          }
+          
         </button>
         <label>Pen Size</label>
         <input
@@ -225,25 +283,25 @@ export default function Canvas() {
       </div>
       <div className="side">
         <button onClick={undo}>
-        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/>
         </svg>
         </button>
         <label>Undo</label>
         <button onClick={redo}>
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 9H8a5 5 0 0 0 0 10h9m4-10-4-4m4 4-4 4"/>
           </svg>
         </button>
         <label>Redo</label>
         <button onClick={clear}>
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
           </svg>      
         </button>
         <label>Clear Canvas</label>
         <button onClick={saveToImage}>
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 12 4.7 4.5 9.3-9"/>
           </svg>
         </button>
@@ -255,6 +313,29 @@ export default function Canvas() {
         style={{ display: "none" }}
         onChange={(e) => handleFileInputChange(e)}
       />
+      <button className='info' onClick={toggleModal}>
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.6-8.5h0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+      </button>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h1>Rules</h1>
+            <ul>
+              <li>
+                <p>Spread love not hate</p>
+                <p>This project was intended to be used for fun and as a platform to express yourself with the option of anonymity. So no offensive language/symbols/ideas will be tolerated</p>
+              </li>
+              <li>
+                <p>Data Privacy</p>
+                <p>We will not be taking any of your personal information so we wish that you do the same for others. Please do not include any sensitive personal information about yourself and others when submitting your notes</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
