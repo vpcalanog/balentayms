@@ -17,7 +17,9 @@ body {
   width: 70vw;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.212));
 }
-
+.modify{
+  font-size: 0.9rem;
+}
 ::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: none;

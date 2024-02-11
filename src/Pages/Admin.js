@@ -14,20 +14,35 @@ export function Admin(props) {
     const [isSignUp, setIsSignUp] = useState(false);
     const [displayName, setDisplayName] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [current, setCurrent] = useState([]);
 
     const handleSignIn = async () => {
-        const { user, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
-
         if (error) {
             console.error(error);
         } else {
             console.log('Signed in successfully:', email);
             setSession(true);
+            getCurrent();
         }
     };
+
+    const getCurrent = async () => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('name')
+            .eq('email', email);
+
+            if (error) {
+                console.log(error);
+            } else {
+                setCurrent(data);
+                console.log(data)
+            }
+    }
 
     const handleSignUp = async () => {
         if (password !== null && email !== null && displayName !== null){
@@ -46,6 +61,18 @@ export function Admin(props) {
                 alert(error);
             } else {
                 alert('Signed up successfully');
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .insert({
+                        displayName: displayName,
+                        email: email,
+                    });
+
+                if (error) {
+                    console.error('Error inserting data:', error.message);
+                } else {
+                    console.log('Data inserted successfully:', data);
+                }
             }
         }else{
             alert('please populate all the fields');
@@ -75,15 +102,12 @@ export function Admin(props) {
     }, [])
 
     async function changeStatus() {
-        const user = supabase.auth.user();
-        const displayName = user ? user.user_metadata.display_name : '';
-
         const { data, error } = await supabase
             .from('admin')
             .update({
                 name: update.name,
                 status: !update.status,
-                changed_by: displayName,
+                changed_by: current[0].name,
             })
             .eq('id', update.id)
             .select()
@@ -114,12 +138,12 @@ export function Admin(props) {
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
                                         : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
-                                        <p>Last modified by: {image.changed_by}</p>
+                                        <p className='modify'>Last touch: {image.changed_by}</p>
                                 </div>
                             )
                         })}
                         <button className='info' onClick={getImages}>
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.7 7.7A7.1 7.1 0 0 0 5 10.8M18 4v4h-4m-7.7 8.3A7.1 7.1 0 0 0 19 13.2M6 20v-4h4"/>
                         </svg>
                         </button>
