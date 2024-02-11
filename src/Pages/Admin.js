@@ -64,7 +64,7 @@ export function Admin(props) {
                 const { data, error } = await supabase
                     .from('profiles')
                     .insert({
-                        displayName: displayName,
+                        name: displayName,
                         email: email,
                     });
 
