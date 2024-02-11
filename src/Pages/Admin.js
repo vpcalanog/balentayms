@@ -70,12 +70,16 @@ export function Admin(props) {
     }, [])
 
     async function changeStatus() {
+        const atIndex = email.indexOf('@');
+        if (atIndex !== -1) {
+            var current = email.slice(0, atIndex);
+        }
         const { data, error } = await supabase
             .from('admin')
             .update({
                 name: update.name,
                 status: !update.status,
-                changed_by: email,
+                changed_by: current,
             })
             .eq('id', update.id)
             .select()
@@ -106,6 +110,7 @@ export function Admin(props) {
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
                                         : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
+                                        <p>Last modified by: {image.changed_by}</p>
                                 </div>
                             )
                         })}
@@ -135,7 +140,7 @@ export function Admin(props) {
                                     <label>Password:</label>
                                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                                     <button className='login' onClick={handleSignIn}>Sign In</button>
-                                    <p>Don't have an account? <span onClick={() => setIsSignUp(true)}>Sign Up</span></p>
+                                    <p>Don't have an account? <span className='signIn' onClick={() => setIsSignUp(true)}>Sign Up</span></p>
                                 </>
                             }
                         </div>

@@ -101,6 +101,7 @@
     text-align: left;
     color: #e41e3f;
     font-size: 1.2rem;
+    overflow: scroll;
 }
 .modal h1{
     text-align: center;

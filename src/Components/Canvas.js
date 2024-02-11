@@ -339,15 +339,23 @@ export default function Canvas() {
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <h1>Rules</h1>
+            <h1>Rules and Guidelines</h1>
             <ul>
               <li>
-                <p>Spread love not hate</p>
-                <p>This project was intended to be used for fun and as a platform to express yourself with the option of anonymity. So no offensive language/symbols/ideas will be tolerated</p>
+                <p>Respect and Tolerance</p>
+                <p>This project was intended to be used for fun and as a place to express yourself with the option of anonymity. So no offensive language/symbols/ideas will be tolerated.</p>
               </li>
               <li>
                 <p>Data Privacy</p>
-                <p>We will not be taking any of your personal information so we wish that you do the same for others. Please do not include any sensitive personal information about yourself and others when submitting your notes</p>
+                <p>We will not be taking any of your personal information so we wish that you do the same for others. Please do not include any sensitive personal information about yourself and others when submitting your notes. If your likeness was used in a note without your consent, feel free to message us at <strong>facts@firstasia.edu.ph</strong></p>
+              </li>
+              <li>
+                <p>Keep it Positive</p>
+                <p>Encourage and uplift people, it doesn't have to be romantic, use this as a platform to show your appreciation for your friends, homies, or people that you just want to appreciate for the little things that they do.</p>
+              </li>
+              <li>
+                <p>Express Yourself</p>
+                <p>You are free to draw and add text to express how you feel, as long as it doesn't go against previous rules.</p>
               </li>
             </ul>
           </div>

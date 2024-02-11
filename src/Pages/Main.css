@@ -1,9 +1,13 @@
+*{
+  font-family: 'Protest Riot', sans-serif;
+}
 body {
     margin: 0;
     border: 0;
     box-sizing: border-box;
     overflow: hidden;
   }
+
 .logo{
   position: fixed;
   top: 0;
