@@ -12,6 +12,7 @@ export function Admin(props) {
     const [password, setPassword] = useState('');
     const [session, setSession] = useState(null)
     const [isSignUp, setIsSignUp] = useState(false);
+    const [displayName, setDisplayName] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleSignIn = async () => {
@@ -29,20 +30,25 @@ export function Admin(props) {
     };
 
     const handleSignUp = async () => {
-        if (password !== confirmPassword) {
-            console.error("Passwords do not match");
-            return;
-        }
-
-        const { user, error } = await supabase.auth.signUp({
-            email,
-            password,
-        });
-
-        if (error) {
-            alert(error);
-        } else {
-            alert('Signed up successfully');
+        if (password !== null && email !== null && displayName !== null){
+            if (password !== confirmPassword) {
+                console.error("Passwords do not match");
+                return;
+            }
+            
+            const { user, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: { data: { display_name: displayName } },
+            });
+    
+            if (error) {
+                alert(error);
+            } else {
+                alert('Signed up successfully');
+            }
+        }else{
+            alert('please populate all the fields');
         }
     };
 
@@ -69,16 +75,15 @@ export function Admin(props) {
     }, [])
 
     async function changeStatus() {
-        const atIndex = email.indexOf('@');
-        if (atIndex !== -1) {
-            var current = email.slice(0, atIndex);
-        }
+        const user = supabase.auth.user();
+        const displayName = user ? user.user_metadata.display_name : '';
+
         const { data, error } = await supabase
             .from('admin')
             .update({
                 name: update.name,
                 status: !update.status,
-                changed_by: current,
+                changed_by: displayName,
             })
             .eq('id', update.id)
             .select()
@@ -130,6 +135,8 @@ export function Admin(props) {
                                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                                     <label>Confirm Password:</label>
                                     <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                                    <label>Display Name:</label>
+                                    <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
                                     <button className='login' onClick={handleSignUp}>Sign Up</button>
                                     <p>Already have an account? <span className='signIn' onClick={() => setIsSignUp(false)}>Sign In</span></p>
                                 </>
