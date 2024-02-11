@@ -42,8 +42,7 @@ export function Admin(props) {
         if (error) {
             alert(error);
         } else {
-            alert('Signed up successfully:');
-            setSession(true);
+            alert('Signed up successfully');
         }
     };
 
