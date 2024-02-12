@@ -341,7 +341,13 @@ export default function Canvas() {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.6-8.5h0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
       </button>
-
+      <div className="tooltip">
+          <p>Ctrl + C = Toggle Draw</p>
+          <p>Middle Mouse = Toggle Size</p>
+          <p>Ctrl + Shift + Z = Redo</p>
+          <p>Ctrl + Y = Redo</p>
+          <p>Ctrl + Z = Undo</p>
+        </div>
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">

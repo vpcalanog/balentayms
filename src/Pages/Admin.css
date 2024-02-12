@@ -94,7 +94,6 @@ button:hover{
     fill: #e41e3f;
     stroke: #e41e3f;
 }
-
 @media screen and (max-width: 600px) {
     .active,
     .inactive{

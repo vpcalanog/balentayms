@@ -71,6 +71,17 @@
 .small{
     scale: 0.7;
 }
+.tooltip{
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    color: #e41e3f;
+    font-size: 1.2rem;
+}
+.tooltip p{
+    flex: 50%;
+}
 .info{
     position: fixed;
     z-index: 3;
@@ -116,6 +127,7 @@
 .modal p:nth-child(2n){
     text-indent: 20px;
 }
+
 @media screen and (max-width: 400px) {
     .canvas{
         flex-direction: column;
@@ -138,6 +150,9 @@
     }
     .modal{
         font-size: 0.9rem;
+    }
+    .tooltip{
+        display: none;
     }
 }
 @media screen and (min-width: 401px) and (max-width: 600px) {
@@ -162,5 +177,13 @@
     }
     .modal{
         font-size: 0.9rem;
+    }
+    .tooltip{
+        display: none;
+    }
+}
+@media screen and (min-width: 601px) and (max-width: 1366px) {
+    .tooltip{
+        display: none;
     }
 }
