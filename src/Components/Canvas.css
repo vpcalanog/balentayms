@@ -65,6 +65,9 @@
 .large{
     scale: 1.1;
 }
+.medium{
+    scale: 0.9;
+}
 .small{
     scale: 0.7;
 }

@@ -11,9 +11,6 @@ export function Admin(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [session, setSession] = useState(null)
-    const [isSignUp, setIsSignUp] = useState(false);
-    const [displayName, setDisplayName] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [current, setCurrent] = useState([]);
 
     const handleSignIn = async () => {
@@ -43,42 +40,6 @@ export function Admin(props) {
                 console.log(data)
             }
     }
-
-    const handleSignUp = async () => {
-        if (password !== null && email !== null && displayName !== null){
-            if (password !== confirmPassword) {
-                console.error("Passwords do not match");
-                return;
-            }
-            
-            const { user, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: { data: { display_name: displayName } },
-            });
-    
-            if (error) {
-                alert(error);
-            } else {
-                alert('Signed up successfully');
-                const { data, error } = await supabase
-                    .from('profiles')
-                    .insert({
-                        name: displayName,
-                        email: email,
-                    });
-
-                if (error) {
-                    console.error('Error inserting data:', error.message);
-                } else {
-                    console.log('Data inserted successfully:', data);
-                }
-            }
-        }else{
-            alert('please populate all the fields');
-        }
-    };
-
     const handleLogout = async () => {
         await supabase.auth.signOut();
         setSession(null);
@@ -121,7 +82,9 @@ export function Admin(props) {
     }
 
     useEffect(() => {
-        changeStatus();
+        if(update.length !== 0){
+            changeStatus();
+        }
     }, [update])
 
     return (
@@ -138,7 +101,7 @@ export function Admin(props) {
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
                                         : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
-                                        <p className='modify'>Last touch: {image.changed_by}</p>
+                                        <p className='modify'>Last touch: <br/>{image.changed_by}</p>
                                 </div>
                             )
                         })}
@@ -151,28 +114,11 @@ export function Admin(props) {
                     :
                     <>
                         <div className='log-form'>
-                            {isSignUp
-                                ? <>
-                                    <label>Email:</label>
-                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                    <label>Password:</label>
-                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                    <label>Confirm Password:</label>
-                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                                    <label>Display Name:</label>
-                                    <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-                                    <button className='login' onClick={handleSignUp}>Sign Up</button>
-                                    <p>Already have an account? <span className='signIn' onClick={() => setIsSignUp(false)}>Sign In</span></p>
-                                </>
-                                : <>
-                                    <label>Email:</label>
-                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                    <label>Password:</label>
-                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                    <button className='login' onClick={handleSignIn}>Sign In</button>
-                                    <p>Don't have an account? <span className='signIn' onClick={() => setIsSignUp(true)}>Sign Up</span></p>
-                                </>
-                            }
+                            <label>Email:</label>
+                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <label>Password:</label>
+                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <button className='login' onClick={handleSignIn}>Sign In</button>
                         </div>
                     </>
                 }
