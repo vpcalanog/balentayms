@@ -12,6 +12,7 @@ export function Admin(props) {
     const [password, setPassword] = useState('');
     const [session, setSession] = useState(null)
     const [current, setCurrent] = useState([]);
+    const [preview, setPreview] = useState(null);
 
     const handleSignIn = async () => {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -96,7 +97,7 @@ export function Admin(props) {
                         {images.map((image) => {
                             return (
                                 <div className='cards' key={image.id}>
-                                    <img className='notes' src={CDNURL + image.name} alt={image.name} />
+                                    <img className='notes' src={CDNURL + image.name} alt={image.name} onClick={() => setPreview(image.name)} />
                                     <br />
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
@@ -126,6 +127,16 @@ export function Admin(props) {
             <Link to='/'>
                 <button className='add' onClick={handleLogout}>Go back</button>
             </Link>
+            {preview !== null
+            ?
+                <div className='zoom-bg'>
+                    <img className='zoom' src={CDNURL + preview} onClick={() => setPreview(null)}/>
+                </div>
+            :
+                <div className='zoom-bg empty'>
+                    <img className='zoom empty' src={CDNURL + preview} onClick={() => setPreview(null)}/>
+                </div>
+            }
         </>
     )
 }
