@@ -61,15 +61,9 @@ export default function Canvas() {
     if (!editor || !fabric) {
       return;
     }
-
+  
     if (!editor.canvas.__eventListeners["mouse:wheel"]) {
       editor.canvas.on("mouse:wheel", function (opt) {
-        var delta = opt.e.deltaY;
-        var zoom = editor.canvas.getZoom();
-        zoom *= 0.999 ** delta;
-        if (zoom > 20) zoom = 20;
-        if (zoom < 0.01) zoom = 0.01;
-        editor.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
         opt.e.preventDefault();
         opt.e.stopPropagation();
       });
@@ -247,6 +241,18 @@ export default function Canvas() {
 
     e.target.value = null;
   };
+
+  useEffect(() => {
+    const note = document.querySelectorAll('.lower-canvas');
+    
+    const baseLightness = 0.5;
+
+    const randomBrightness = Math.min(baseLightness + (Math.random() * 0.2 + 1), 1);
+
+    note.forEach(el => {
+      el.style.filter = `brightness(${randomBrightness})`;
+    });
+  }, []);
 
   return (
     <div className="canvas">

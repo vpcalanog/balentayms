@@ -1,5 +1,5 @@
 *{
-  font-family: 'Protest Riot', sans-serif;
+  font-family: 'Pixelify Sans', serif;
 }
 body {
     margin: 0;
@@ -10,15 +10,15 @@ body {
 
 .logo{
   position: fixed;
-  top: 0;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%,-50%);
   z-index: 0;
   width: 70vw;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.212));
 }
 .modify{
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 ::-webkit-scrollbar-track
 {
