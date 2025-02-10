@@ -7,57 +7,7 @@ export function Background() {
     return (
         <>
             <div className='background'>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
-                <div className='layer'>
-                    <Heart/>
-                </div>
+                
             </div>
         </>
     )

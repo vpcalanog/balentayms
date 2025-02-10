@@ -4,14 +4,14 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Link } from 'react-router-dom';
 
 export function Content(props) {
-    const CDNURL = 'https://tymoeuinlkohesghdjpk.supabase.co/storage/v1/object/public/Notes/valentines/';
+    const CDNURL = 'https://vjuzvkupjfdakzkffpaz.supabase.co/storage/v1/object/public/Notes/valentines/';
     const [images, setImages] = useState([]);
     const [preview, setPreview] = useState(null);
     const supabase = useSupabaseClient();
 
     async function getImages(){
         const { data, error } = await supabase
-            .from('admin')
+            .from('entries')
             .select('*')
             .eq('status', true)
             .order('id', { ascending: false });
@@ -19,7 +19,7 @@ export function Content(props) {
             if(data!== null) {
               setImages(data);
             }else{
-              alert(error);
+            //   alert(error);
             }
     }
 
@@ -30,11 +30,15 @@ export function Content(props) {
     return (
         <>
             <div className='content'>
-                {images.map((image) => {
-                    return(
-                    <img className='notes' src={CDNURL + image.name} onClick={() => setPreview(image.name)}/>
-                    )
-                })}
+                {images.map((image) => (
+                    <img 
+                        key={image.id} 
+                        className='notes' 
+                        src={CDNURL + image.name} 
+                        onClick={() => setPreview(image.name)}
+                        alt="Note"
+                    />
+                ))}
             </div>
             <Link to='/additional'>
                 <button className='add'>Submit Yours!</button>
