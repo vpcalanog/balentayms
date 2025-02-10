@@ -7,7 +7,15 @@ export function Background() {
     return (
         <>
             <div className='background'>
-                
+                {/* <Heart />
+                <Heart />
+                <Heart />
+                <Heart />
+                <Heart />
+                <Heart />
+                <Heart />
+                <Heart />
+                <Heart /> */}
             </div>
         </>
     )
