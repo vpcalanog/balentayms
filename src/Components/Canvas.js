@@ -198,7 +198,7 @@ export default function Canvas() {
         name: logs,
     }
     const { data,error } = await supabase
-    .from('admin')
+    .from('entries')
     .insert(newLog)
     .select()
 
