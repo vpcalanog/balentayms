@@ -8,7 +8,7 @@ export function Content(props) {
     const [images, setImages] = useState([]);
     const [preview, setPreview] = useState(null);
     const supabase = useSupabaseClient();
-    
+
     async function getImages() {
         const { data, error } = await supabase
             .from('entries')
@@ -24,50 +24,55 @@ export function Content(props) {
     }
 
     useEffect(() => {
-        const fetchAndRotateImages = async () => {
-            await getImages();
-
-            const imagesElements = document.querySelectorAll('.notes');
-            imagesElements.forEach((img) => {
-                const randomClass = `rotate-${Math.floor(Math.random() * 13)}`; 
-                img.classList.add(randomClass);
-            });
-
-            console.log('Images rotated');
-        };
-
-        fetchAndRotateImages(); 
+        getImages();
     }, []); 
+
+    // Function to get a random rotation class
+    const getRandomRotationClass = () => {
+        const rotationNumber = Math.floor(Math.random() * 13); // 0 to 12
+        return `rotate-${rotationNumber}`;
+    };
 
     return (
         <>
-            <div className='content'>
+            <div className="content">
                 {images.map((image) => (
                     <img
                         key={image.id}
-                        className='notes'
+                        className={`notes ${getRandomRotationClass()}`}
                         src={CDNURL + image.name}
                         onClick={() => setPreview(image.name)}
                         alt="Note"
                     />
                 ))}
             </div>
-            <Link to='/additional'>
-                <button className='add'>Submit Yours!</button>
+            
+            <Link to="/additional">
+                <button className="add">Submit Yours!</button>
             </Link>
 
-            {preview !== null
-                ? (
-                    <div className='zoom-bg'>
-                        <img className='zoom' src={CDNURL + preview} onClick={() => setPreview(null)} />
-                    </div>
-                )
-                : (
-                    <div className='zoom-bg empty'>
-                        <img className='zoom empty' src={CDNURL + preview} onClick={() => setPreview(null)} />
-                    </div>
-                )
-            }
+            {preview && (
+                <div 
+                    className="zoom-bg"
+                    onClick={() => setPreview(null)}
+                >
+                    <img 
+                        className="zoom"
+                        src={CDNURL + preview}
+                        alt="Preview"
+                    />
+                </div>
+            )}
+
+            {!preview && (
+                <div className="zoom-bg empty">
+                    <img 
+                        className="zoom empty"
+                        src={CDNURL + preview}
+                        onClick={() => setPreview(null)}
+                    />
+                </div>
+            )}
         </>
     );
 }
