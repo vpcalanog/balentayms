@@ -1,116 +1,163 @@
-/* Full-screen container */
 .content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.logo-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+}
+
+.center-logo {
+  width: 40vw;
+  max-width: 300px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.logo-text {
+  margin-top: 5px;
+  font-size: 25px;
+  color: #ffffff;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.notes {
+  position: absolute;
+  width: 18vw;
+  max-width: 140px;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.add {
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+  width: 12vw;
+  max-width: 150px;
+  height: 5vh;
+  border-radius: 25px;
+  border: 2px solid #e41e3f;
+  background: #f33e59be;
+  color: #ffffff;
+  font-weight: 700;
+  z-index: 10000;
+}
+
+.add:hover {
+  border: 2px solid #ffffff;
+  background: #ffffff;
+  color: #f33e58;
+}
+
+.zoom {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  max-width: 45%;
+  animation: zoomIn 0.3s ease-out;
+}
+
+.zoom-bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.7);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
   }
-  
-  .logo-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 2;
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
-  
-  .center-logo {
-    width: 40vw;
-    max-width: 300px;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .logo-text {
-    margin-top: 5px;
-    font-size: 25px;
-    color: #ffffff;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  to {
+    opacity: 1;
   }
-  
+}
+
+/* notes rotation hehe */
+.rotate-0 {
+  transform: rotate(0deg);
+}
+.rotate-1 {
+  transform: rotate(5deg);
+}
+.rotate-2 {
+  transform: rotate(10deg);
+}
+.rotate-3 {
+  transform: rotate(15deg);
+}
+.rotate-4 {
+  transform: rotate(20deg);
+}
+.rotate-5 {
+  transform: rotate(25deg);
+}
+.rotate-6 {
+  transform: rotate(30deg);
+}
+.rotate-7 {
+  transform: rotate(-5deg);
+}
+.rotate-8 {
+  transform: rotate(-10deg);
+}
+.rotate-9 {
+  transform: rotate(-15deg);
+}
+.rotate-10 {
+  transform: rotate(-20deg);
+}
+.rotate-11 {
+  transform: rotate(-25deg);
+}
+.rotate-12 {
+  transform: rotate(-30deg);
+}
+
+/* responsive adjustments for mobile */
+@media screen and (max-width: 600px) {
   .notes {
-    position: absolute;
-    width: 15vw;
-    max-width: 120px;
-    transition: transform 0.3s ease-in-out;
-    cursor: pointer;
+    width: 20vw;
+    max-width: 80px;
+  }
+
+  .center-logo {
+    width: 50vw;
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
   }
 
   .add {
-    position: fixed;
-    bottom: 2%;
-    right: 2%;
-    width: 12vw;
-    max-width: 150px;
-    height: 5vh;
-    border-radius: 25px;
-    border: 2px solid #e41e3f;
-    background: #f33e59be;
-    color: #ffffff;
-    font-weight: 700;
-    z-index: 3;
+    width: 30vw;
   }
-  
-  .add:hover {
-    border: 2px solid #ffffff;
-    background: #ffffff;
-    color: #f33e58;
-  }
-  
+
   .zoom {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-    max-width: 90%;
+    width: 80%;
   }
-  
-  .zoom-bg {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 4;
-    background: rgba(0, 0, 0, 0.7);
-  }
-  
-  .rotate-0 { transform: rotate(0deg); }
-  .rotate-1 { transform: rotate(5deg); }
-  .rotate-2 { transform: rotate(10deg); }
-  .rotate-3 { transform: rotate(15deg); }
-  .rotate-4 { transform: rotate(20deg); }
-  .rotate-5 { transform: rotate(25deg); }
-  .rotate-6 { transform: rotate(30deg); }
-  .rotate-7 { transform: rotate(-5deg); }
-  .rotate-8 { transform: rotate(-10deg); }
-  .rotate-9 { transform: rotate(-15deg); }
-  .rotate-10 { transform: rotate(-20deg); }
-  .rotate-11 { transform: rotate(-25deg); }
-  .rotate-12 { transform: rotate(-30deg); }
-  
-  /* Mobile Adjustments */
-  @media screen and (max-width: 600px) {
-    .notes {
-      width: 20vw;
-      max-width: 80px;
-    }
-  
-    .center-logo {
-      width: 50vw;
-    }
-  
-    .logo-text {
-      font-size: 1.5rem;
-    }
-  
-    .add {
-      width: 30vw;
-    }
-  
-    .zoom {
-      width: 80%;
-    }
-  }
-  
+}
