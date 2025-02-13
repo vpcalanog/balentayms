@@ -14,12 +14,23 @@ export function Admin(props) {
     const [current, setCurrent] = useState([]);
     const [preview, setPreview] = useState(null);
 
+    useEffect(() => {
+        const savedSession = localStorage.getItem('adminSession');
+        const savedUser = localStorage.getItem('adminUser');
+        
+        if (savedSession && savedUser) {
+            setSession(true);
+            setCurrent(JSON.parse(savedUser));
+            getImages();
+        }
+    }, []);
+
     const handleSignIn = async () => {
         const { data, error } = await supabase
-            .from('accounts')  // Changed from 'profiles' to 'accounts'
+            .from('accounts')
             .select('*')
             .eq('username', username)
-            .eq('password', password) // Ensure passwords are securely hashed in production
+            .eq('password', password)
             .single();
 
         if (error || !data) {
@@ -27,12 +38,19 @@ export function Admin(props) {
         } else {
             console.log('Signed in successfully:', username);
             setSession(true);
-            setCurrent(data);  // Store the authenticated user's data
+            setCurrent(data);
+            
+            localStorage.setItem('adminSession', 'true');
+            localStorage.setItem('adminUser', JSON.stringify(data));
+            
             getImages();
         }
     };
 
     const handleLogout = async () => {
+        localStorage.removeItem('adminSession');
+        localStorage.removeItem('adminUser');
+        
         setSession(null);
         setCurrent([]);
     };
@@ -45,8 +63,6 @@ export function Admin(props) {
 
         if (data !== null) {
             setImages(data);
-        } else {
-            // alert(error);
         }
     }
 
@@ -95,7 +111,7 @@ export function Admin(props) {
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
                                         : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
-                                    <p className='modify'>Last touch: <br />{image.updated_by}</p>
+                                    <p className='modify'>Last touch: <br />{image.updated_by !== null ? image.updated_by : "To be approved"}</p>
                                 </div>
                             )
                         })}

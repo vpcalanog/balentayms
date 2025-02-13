@@ -6,6 +6,7 @@ import { Content } from './Content';
 import { AddNew } from './AddNew';
 import { Admin } from './Admin';
 import bitmap from '../bitmap.png';
+import { ToastContainer, Bounce } from 'react-toastify';
 
 const Main = () => {
   return (
@@ -17,6 +18,19 @@ const Main = () => {
         <Route path='/administrasyones' element={<Admin/>} />
       </Routes>
       <img src={bitmap} alt='FACTS Logo' className='logo'/>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+      />
     </>
   );
 };
