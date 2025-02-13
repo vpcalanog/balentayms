@@ -4,6 +4,8 @@ import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { v4 as uuidv4 } from "uuid";
 import './Canvas.css';
+import { toast } from "react-toastify";
+import ConfirmModal from "./ConfirmModal";
 
 export default function Canvas() {
   const { editor, onReady } = useFabricJSEditor();
@@ -14,6 +16,7 @@ export default function Canvas() {
   const [size, setSize] = useState('');
   const supabase = useSupabaseClient();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -204,36 +207,66 @@ export default function Canvas() {
     }
   };
 
+  // const saveToImage = async () => {
+  //   const isConfirmed = window.confirm("Are you sure you want to submit the canvas?");
+    
+  //   if (isConfirmed) {
+  //     if (!editor || !fabric) {
+  //       return;
+  //     }
+  
+  //     const dataURL = editor.canvas.toDataURL({
+  //       format: "png",
+  //       multiplier: 2,
+  //     });
+  
+  //     const blob = await fetch(dataURL).then((res) => res.blob());
+  //     const uid = uuidv4();
+  
+  //     const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
+  
+  //     if (data) {
+  //       // alert("Your note has been submitted, please wait as the administrators review your message");
+  //       toast.success("Your note has been submitted, please wait as the administrators review your message");
+  //       logImages(uid);
+  //       clear();
+  //     } else {
+  //       console.error("Error uploading image:", error);
+  //     }
+  //   } else {
+  //     // console.log("Submission canceled.");
+  //     toast.error("Submission canceled.");
+  //   }
+    
   const saveToImage = async () => {
-    const isConfirmed = window.confirm("Are you sure you want to submit the canvas?");
-    
-    if (isConfirmed) {
-      if (!editor || !fabric) {
-        return;
-      }
-  
-      const dataURL = editor.canvas.toDataURL({
-        format: "png",
-        multiplier: 2,
-      });
-  
-      const blob = await fetch(dataURL).then((res) => res.blob());
-      const uid = uuidv4();
-  
-      const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
-  
-      if (data) {
-        alert("Your note has been submitted, please wait as the administrators review your message");
-        logImages(uid);
-        clear();
-      } else {
-        console.error("Error uploading image:", error);
-      }
-    } else {
-      console.log("Submission canceled.");
-    }
-    
+    setConfirmModalOpen(true);
   };
+  
+  const handleConfirmSubmit = async () => {
+    if (!editor || !fabric) {
+      return;
+    }
+  
+    const dataURL = editor.canvas.toDataURL({
+      format: "png",
+      multiplier: 2,
+    });
+  
+    const blob = await fetch(dataURL).then((res) => res.blob());
+    const uid = uuidv4();
+  
+    const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
+  
+    if (data) {
+      toast.success("Your note has been submitted, please wait as the administrators review your message");
+      logImages(uid);
+      clear();
+    } else {
+      console.error("Error uploading image:", error);
+    }
+    setConfirmModalOpen(false);
+  };
+
 
   const handleFileInputChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -379,6 +412,15 @@ export default function Canvas() {
           </div>
         </div>
       )}
+      <ConfirmModal 
+        isOpen={isConfirmModalOpen}
+        onConfirm={handleConfirmSubmit}
+        onCancel={() => {
+          setConfirmModalOpen(false);
+          toast.error("Submission canceled.");
+        }}
+        message="Are you sure you want to submit the canvas?"
+      />
     </div>
   );
 }

@@ -8,8 +8,7 @@ export function Content(props) {
     const [images, setImages] = useState([]);
     const [preview, setPreview] = useState(null);
     const supabase = useSupabaseClient();
-
-    // Fetch images from Supabase
+    
     async function getImages() {
         const { data, error } = await supabase
             .from('entries')
