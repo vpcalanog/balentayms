@@ -7,8 +7,9 @@ export function Content(props) {
     const CDNURL = 'https://vjuzvkupjfdakzkffpaz.supabase.co/storage/v1/object/public/Notes/valentines/';
     const [images, setImages] = useState([]);
     const [preview, setPreview] = useState(null);
+    const [imageRotations, setImageRotations] = useState({});
     const supabase = useSupabaseClient();
-
+    
     async function getImages() {
         const { data, error } = await supabase
             .from('entries')
@@ -17,6 +18,12 @@ export function Content(props) {
             .order('id', { ascending: false });
 
         if (data !== null) {
+            // Generate and store rotation classes when images are loaded
+            const rotations = {};
+            data.forEach(image => {
+                rotations[image.id] = `rotate-${Math.floor(Math.random() * 13)}`;
+            });
+            setImageRotations(rotations);
             setImages(data);
         } else {
             console.error(error);
@@ -27,19 +34,13 @@ export function Content(props) {
         getImages();
     }, []); 
 
-    // Function to get a random rotation class
-    const getRandomRotationClass = () => {
-        const rotationNumber = Math.floor(Math.random() * 13); // 0 to 12
-        return `rotate-${rotationNumber}`;
-    };
-
     return (
         <>
             <div className="content">
                 {images.map((image) => (
                     <img
                         key={image.id}
-                        className={`notes ${getRandomRotationClass()}`}
+                        className={`notes ${imageRotations[image.id] || ''}`}
                         src={CDNURL + image.name}
                         onClick={() => setPreview(image.name)}
                         alt="Note"
