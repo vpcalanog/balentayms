@@ -13,7 +13,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  z-index: 0;
+  z-index: 0 !important;
   width: 70vw;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.212));
 }

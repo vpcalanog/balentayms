@@ -1,79 +1,92 @@
-import { React, useEffect, useState } from 'react';
-import './Content.css';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { Link } from 'react-router-dom';
+import { React, useEffect, useState } from "react";
+import "./Content.css";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Link } from "react-router-dom";
+import logo from "../facts-logo.png";
 
-export function Content(props) {
-    const CDNURL = 'https://vjuzvkupjfdakzkffpaz.supabase.co/storage/v1/object/public/Notes/valentines/';
-    const [images, setImages] = useState([]);
-    const [preview, setPreview] = useState(null);
-    const [imageRotations, setImageRotations] = useState({});
-    const supabase = useSupabaseClient();
-    
-    async function getImages() {
-        const { data, error } = await supabase
-            .from('entries')
-            .select('*')
-            .eq('status', true)
-            .order('id', { ascending: false });
+export function Content() {
+  const CDNURL =
+    "https://vjuzvkupjfdakzkffpaz.supabase.co/storage/v1/object/public/Notes/valentines/";
+  const [images, setImages] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [imageProps, setImageProps] = useState({});
+  const supabase = useSupabaseClient();
 
-        if (data !== null) {
-            // Generate and store rotation classes when images are loaded
-            const rotations = {};
-            data.forEach(image => {
-                rotations[image.id] = `rotate-${Math.floor(Math.random() * 13)}`;
-            });
-            setImageRotations(rotations);
-            setImages(data);
-        } else {
-            console.error(error);
-        }
+  async function getImages() {
+    const { data, error } = await supabase
+      .from("entries")
+      .select("*")
+      .eq("status", true)
+      .order("id", { ascending: false });
+
+    if (data) {
+      const props = {};
+      data.forEach((image) => {
+        const angle = Math.random() * 2 * Math.PI;
+        const radius = Math.random() * (45 - 30) + 30; // makes radius between 30% and 45%
+        const x = 50 + radius * Math.cos(angle);
+        const y = 50 + radius * Math.sin(angle);
+        props[image.id] = {
+          rotation: `rotate-${Math.floor(Math.random() * 13)}`,
+          x,
+          y,
+        };
+      });
+      setImageProps(props);
+      setImages(data);
+    } else {
+      console.error(error);
     }
+  }
 
-    useEffect(() => {
-        getImages();
-    }, []); 
+  useEffect(() => {
+    getImages();
+  }, []);
 
-    return (
-        <>
-            <div className="content">
-                {images.map((image) => (
-                    <img
-                        key={image.id}
-                        className={`notes ${imageRotations[image.id] || ''}`}
-                        src={CDNURL + image.name}
-                        onClick={() => setPreview(image.name)}
-                        alt="Note"
-                    />
-                ))}
-            </div>
-            
-            <Link to="/additional">
-                <button className="add">Submit Yours!</button>
-            </Link>
+  return (
+    <>
+      <div className="content">
+        <div className="logo-container">
+          <img src={logo} alt="FACTS Logo" className="center-logo" />
+          <div className="logo-text">FACTS Freedom Wall</div>
+        </div>
 
-            {preview && (
-                <div 
-                    className="zoom-bg"
-                    onClick={() => setPreview(null)}
-                >
-                    <img 
-                        className="zoom"
-                        src={CDNURL + preview}
-                        alt="Preview"
-                    />
-                </div>
-            )}
+        {images.map((image) => (
+          <img
+            key={image.id}
+            className={`notes ${imageProps[image.id]?.rotation || ""}`}
+            src={CDNURL + image.name}
+            style={{
+              left: `${imageProps[image.id]?.x}%`,
+              top: `${imageProps[image.id]?.y}%`,
+            }}
+            onClick={() => setPreview(image.name)}
+            alt="Note"
+          />
+        ))}
+      </div>
 
-            {!preview && (
-                <div className="zoom-bg empty">
-                    <img 
-                        className="zoom empty"
-                        src={CDNURL + preview}
-                        onClick={() => setPreview(null)}
-                    />
-                </div>
-            )}
-        </>
-    );
+      <Link to="/additional">
+        <button className="add">Submit Yours!</button>
+      </Link>
+
+      {preview !== null ? (
+        <div className="zoom-bg">
+          <img
+            className="zoom"
+            src={CDNURL + preview}
+            onClick={() => setPreview(null)}
+          />
+        </div>
+      ) : (
+        <div className="zoom-bg empty">
+          <img
+            className="zoom empty"
+            src={CDNURL + preview}
+            onClick={() => setPreview(null)}
+          />
+        </div>
+      )}
+    </>
+  );
 }

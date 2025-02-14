@@ -1,105 +1,149 @@
-.cards{
-    display: block;
-}
-
-button{
-    background: none;
-    border: 0;
-}
-button:hover{
-    background: none;
-    border: 0;
-}
-.active,
-.inactive{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 8vw;
-    height: 5vh;
-    margin: auto;
-    border-radius: 25px;
-    font-weight: 700;
-    color: #ffffff;
-}
-.active{
-    background: #00ad0e;
-    border: 2px solid #008d0c;
-}
-.active:hover{
-    background: #00ad0e7c;
-    border: 2px solid #008d0c7e;
-}
-.inactive{
-    border: 2px solid #e41e3f;
-    background: #cf0023;
-}
-.inactive:hover{
-    border: 2px solid #e41e3f7a;
-    background: #cf002377;
-}
-.log-form{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 50vw;
-    height: 50vh;
-}
-.log-form input{
-    width: 20vw;
-    margin-bottom: 10px;
-    padding: 5px;
-    border: 0;
-    border-radius: 25px;
-}
-.login{
-    padding: 10px;
-    border: 2px solid #e41e3f;
-    border-radius: 25px;
-    background: #cf0023;
-    color: #ffffff;
-}
-.login:hover{
-    border: 2px solid #e41e3f;
-    background: #ffffff;
-    color: #cf0023;
-}
-.signIn{
-    text-decoration: underline;
-    color: blue;
-}
-.signIn:hover{
-    color: gray;
-}
-
-.info{
+.admin-content {
+  display: flex;
     position: fixed;
-    z-index: 3;
-    top: 0;
-    right: 0;
-    margin: 20px 20px 0 0;
-    padding: 5px;
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    border: 2px solid #e41e3f;
-    background: #f33e59be;
-    fill: #ffffff;
-    stroke: #ffffff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 85vw;
+    height: 85vh;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.603);
+    border-radius: 25px;
+    gap: 2.5vw;
+    padding: 2.5vh 2.5vw;
+    overflow: auto;
 }
-.info:hover{
-    border: 2px solid #e41e3f;
-    background: #ffffff;
-    fill: #e41e3f;
-    stroke: #e41e3f;
+.admin-notes{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;  
+  align-items: center;
+  gap: 2.5vw;
+  width: 10vw;
+  height: 10vh;
+  padding: 2.5vh 2.5vw;
 }
+.admin-content .notes {
+  display: block;
+  position: relative;
+  z-index: 10000;
+}
+
+button {
+  background: none;
+  border: 0;
+}
+button:hover {
+  background: none;
+  border: 0;
+}
+
+.active,
+.inactive {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 8vw;
+  height: 5vh;
+  margin: auto;
+  border-radius: 25px;
+  font-weight: 700;
+  color: #ffffff;
+  position: relative;
+  z-index: 20000;
+}
+.active {
+  background: #00ad0e;
+  border: 2px solid #008d0c;
+}
+.active:hover {
+  background: #00ad0e7c;
+  border: 2px solid #008d0c7e;
+}
+.inactive {
+  border: 2px solid #e41e3f;
+  background: #cf0023;
+}
+.inactive:hover {
+  border: 2px solid #e41e3f7a;
+  background: #cf002377;
+}
+
+.log-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+  height: 50vh;
+  position: relative;
+  z-index: 200000;
+}
+.log-form input {
+  width: 20vw;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 0;
+  border-radius: 25px;
+}
+
+.login {
+  padding: 10px;
+  border: 2px solid #e41e3f;
+  border-radius: 25px;
+  background: #cf0023;
+  color: #ffffff;
+}
+.login:hover {
+  border: 2px solid #e41e3f;
+  background: #ffffff;
+  color: #cf0023;
+}
+
+.signIn {
+  text-decoration: underline;
+  color: blue;
+}
+.signIn:hover {
+  color: gray;
+}
+
+.info {
+  position: fixed;
+  z-index: 100001;
+  top: 0;
+  right: 0;
+  margin: 20px 20px 0 0;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  border: 2px solid #e41e3f;
+  background: #f33e59be;
+  fill: #ffffff;
+  stroke: #ffffff;
+}
+
+.info:hover {
+  border: 2px solid #e41e3f;
+  background: #ffffff;
+  fill: #e41e3f;
+  stroke: #e41e3f;
+}
+
+.zoom-bg.empty {
+  display: none !important;
+}
+
 @media screen and (max-width: 600px) {
-    .active,
-    .inactive{
-        width: 30vw;
-    }
-    .log-form input{
-        width: 60vw;
-    }
+  .active,
+  .inactive {
+    width: 30vw;
+  }
+  .log-form input {
+    width: 60vw;
+  }
 }
