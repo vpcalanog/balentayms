@@ -99,13 +99,13 @@ export function Admin(props) {
 
     return (
         <>
-            <div className='content'>
+            <div className='admin-content'>
                 {session !== null
                     ?
                     <>
                         {images.map((image) => {
                             return (
-                                <div className='cards' key={image.id}>
+                                <div className='admin-notes'>
                                     <img className='notes' src={CDNURL + image.name} alt={image.name} onClick={() => setPreview(image.name)} />
                                     <br />
                                     {image.status === true
