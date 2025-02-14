@@ -21,17 +21,49 @@ export function Content() {
 
     if (data) {
       const props = {};
-      data.forEach((image) => {
-        const angle = Math.random() * 2 * Math.PI;
-        const radius = Math.random() * (45 - 30) + 30; // makes radius between 30% and 45%
-        const x = 50 + radius * Math.cos(angle);
-        const y = 50 + radius * Math.sin(angle);
+      const usedPositions = new Set();
+      
+      data.forEach((image, index) => {
+        let x, y, posKey;
+        let attempts = 0;
+        const maxAttempts = 50;
+
+        do {
+          // Increased radius range for better spread
+          const minRadius = 20;
+          const maxRadius = 55;
+          const radius = Math.random() * (maxRadius - minRadius) + minRadius;
+          
+          // Added more randomness to angle calculation
+          const baseAngle = (index * (2 * Math.PI / Math.min(data.length, 12)));
+          const randomOffset = Math.random() * 0.8 - 0.4; // Increased random offset
+          const angle = baseAngle + randomOffset;
+          
+          // Center point adjusted slightly
+          x = 52 + radius * Math.cos(angle);
+          y = 48 + radius * Math.sin(angle);
+          
+          // Increased grid size for more granular positioning
+          posKey = `${Math.round(x/15)},${Math.round(y/15)}`;
+          attempts++;
+        } while (usedPositions.has(posKey) && attempts < maxAttempts);
+
+        usedPositions.add(posKey);
+        
+        // Added slight random offset to final position
+        const finalX = x + (Math.random() * 4 - 2);
+        const finalY = y + (Math.random() * 4 - 2);
+        
         props[image.id] = {
           rotation: `rotate-${Math.floor(Math.random() * 13)}`,
-          x,
-          y,
+          x: finalX,
+          y: finalY,
+          inCircle: true,
+          // Added scale variation for more visual interest
+          scale: 0.9 + Math.random() * 0.2
         };
       });
+      
       setImageProps(props);
       setImages(data);
     } else {
@@ -59,6 +91,11 @@ export function Content() {
             style={{
               left: `${imageProps[image.id]?.x}%`,
               top: `${imageProps[image.id]?.y}%`,
+              position: 'absolute',
+              transform: imageProps[image.id]?.inCircle 
+                ? `translate(-50%, -50%) scale(${imageProps[image.id]?.scale})`
+                : 'none',
+              zIndex: Math.floor(Math.random() * 10)
             }}
             onClick={() => setPreview(image.name)}
             alt="Note"
