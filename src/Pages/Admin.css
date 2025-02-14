@@ -19,11 +19,11 @@
 .admin-notes{
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;  
   align-items: center;
-  gap: 2.5vw;
   width: 10vw;
-  height: 10vh;
+  height: 25vh;
   padding: 2.5vh 2.5vw;
 }
 .admin-content .notes {
@@ -141,6 +141,10 @@ button:hover {
 @media screen and (max-width: 600px) {
   .active,
   .inactive {
+    width: 15vw;
+  }
+
+  .admin-notes{
     width: 30vw;
   }
   .log-form input {

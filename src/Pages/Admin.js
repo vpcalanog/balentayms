@@ -107,7 +107,6 @@ export function Admin(props) {
                             return (
                                 <div className='admin-notes'>
                                     <img className='notes' src={CDNURL + image.name} alt={image.name} onClick={() => setPreview(image.name)} />
-                                    <br />
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
                                         : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
