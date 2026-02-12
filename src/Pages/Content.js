@@ -86,7 +86,7 @@ export function Content() {
       <div className="content">
         <div className="logo-container">
           <img src={logo} alt="FACTS Logo" className="center-logo" />
-          <div className="logo-text">FACTS Freedom Wall</div>
+          {/* <div className="logo-text">FACTS Freedom Wall</div> */}
         </div>
 
         {images.map((image) => (

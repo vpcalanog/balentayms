@@ -10,7 +10,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.603);
+  /* background: rgba(255, 255, 255, 0.603); */
   border-radius: 25px;
   padding: 2.5vh 2.5vw;
   overflow-x: hidden;
