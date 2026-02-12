@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './Admin.css';
 
 export function Admin(props) {
-    const CDNURL = 'https://vjuzvkupjfdakzkffpaz.supabase.co/storage/v1/object/public/Notes/valentines/';
+    const CDNURL = 'https://jlyrxkjakblqzeppreod.supabase.co/storage/v1/object/public/Notes/valentines/';
     const [images, setImages] = useState([]);
     const [update, setUpdate] = useState([]);
     const supabase = useSupabaseClient();

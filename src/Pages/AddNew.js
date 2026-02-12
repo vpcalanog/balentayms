@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fabric } from 'fabric';
 import './AddNew.css';
@@ -8,6 +8,7 @@ export function AddNew() {
   const canvasRef = useRef(null);
   const canvasHistory = useRef([]);
   const canvasIndex = useRef(-1);
+  const [template, setTemplate] = useState('red');
 
   useEffect(() => {
     const canvas = new fabric.Canvas(canvasRef.current, {
@@ -35,7 +36,24 @@ export function AddNew() {
   return (
     <>
       <div className='content'>
-        <Canvas/>
+        <div className="template-controls">
+          <label className="template-label">Choose a template</label>
+          <div className="swatches" role="list">
+            {['red','blue','green','yellow','purple'].map((t) => (
+              <button
+                key={t}
+                type="button"
+                role="listitem"
+                aria-pressed={template === t}
+                className={`swatch ${template === t ? 'selected' : ''}`}
+                data-color={t}
+                onClick={() => setTemplate(t)}
+                title={t.charAt(0).toUpperCase() + t.slice(1)}
+              />
+            ))}
+          </div>
+        </div>
+        <Canvas template={template} />
       </div>
       <Link to='/'>
         <button className='back'>Go Back</button>

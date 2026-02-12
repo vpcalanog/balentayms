@@ -6,8 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import './Canvas.css';
 import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
+import templateRed from './template_red.png';
+import templateBlue from './template_blue.png';
+import templateGreen from './template_green.png';
+import templateYellow from './template_yellow.png';
+import templatePurple from './template_purple.png';
 
-export default function Canvas() {
+export default function Canvas({ template = 'red' }) {
   const { editor, onReady } = useFabricJSEditor();
   const fileInputRef = useRef(null);
   const history = [];
@@ -113,8 +118,15 @@ export default function Canvas() {
     if (!editor || !fabric) {
       return;
     }
+    const templateImages = {
+      red: templateRed,
+      blue: templateBlue,
+      green: templateGreen,
+      yellow: templateYellow,
+      purple: templatePurple,
+    };
 
-    const templateImagePath = require("./Template.png");
+    const templateImagePath = templateImages[template] || templateRed;
 
     fabric.Image.fromURL(templateImagePath, (image) => {
       const screenWidth = window.innerWidth;
@@ -139,7 +151,7 @@ export default function Canvas() {
     editor.canvas.setWidth(500);
     addBackground();
     editor.canvas.renderAll();
-  }, [editor?.canvas.backgroundImage]);
+  }, [editor, template]);
 
   const toggleSize = () => {
     if(editor.canvas.freeDrawingBrush.width === 10){

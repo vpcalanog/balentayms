@@ -6,7 +6,7 @@ import logo from "../facts-logo.png";
 
 export function Content() {
   const CDNURL =
-    "https://vjuzvkupjfdakzkffpaz.supabase.co/storage/v1/object/public/Notes/valentines/";
+    "https://jlyrxkjakblqzeppreod.supabase.co/storage/v1/object/public/Notes/valentines/";
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState(null);
   const [imageProps, setImageProps] = useState({});
@@ -30,7 +30,7 @@ export function Content() {
 
         do {
           // Increased radius range for better spread
-          const minRadius = 20;
+          const minRadius = 10;
           const maxRadius = 55;
           const radius = Math.random() * (maxRadius - minRadius) + minRadius;
           
@@ -49,11 +49,17 @@ export function Content() {
         } while (usedPositions.has(posKey) && attempts < maxAttempts);
 
         usedPositions.add(posKey);
-        
+
         // Added slight random offset to final position
-        const finalX = x + (Math.random() * 4 - 2);
-        const finalY = y + (Math.random() * 4 - 2);
-        
+        let finalX = x + (Math.random() * 4 - 2);
+        let finalY = y + (Math.random() * 4 - 2);
+
+        const minPercent = 6; // minimum center percent (left/top)
+        const maxPercent = 94; // maximum center percent (left/top)
+
+        finalX = Math.min(Math.max(finalX, minPercent), maxPercent);
+        finalY = Math.min(Math.max(finalY, minPercent), maxPercent);
+
         props[image.id] = {
           rotation: `rotate-${Math.floor(Math.random() * 13)}`,
           x: finalX,
