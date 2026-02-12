@@ -37,7 +37,7 @@ export function AddNew() {
     <>
       <div className='content'>
         <div className="template-controls">
-          <label className="template-label">Choose a template</label>
+          {/* <label className="template-label">Choose a template</label> */}
           <div className="swatches" role="list">
             {['red','blue','green','yellow','purple'].map((t) => (
               <button
