@@ -1,0 +1,146 @@
+import React, { useEffect, useRef, useState } from "react";
+import "./Content.css";
+import "./AddNew.css";
+import "./Admin.css";
+import "./Local.css";
+import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+
+export function Local() {
+    const containerRef = useRef(null);
+    const contentRef = useRef(null);
+    const canvasWrapperRef = useRef(null);
+    const { editor, onReady } = useFabricJSEditor();
+    const [color, setColor] = useState('#e74c3c');
+    const historyRef = useRef([]);
+
+    const setPenColor = (newColor) => {
+        setColor(newColor);
+        if (editor && editor.canvas && editor.canvas.freeDrawingBrush) {
+            editor.canvas.freeDrawingBrush.color = newColor;
+            editor.setStrokeColor && editor.setStrokeColor(newColor);
+            editor.canvas.renderAll && editor.canvas.renderAll();
+        }
+    };
+
+    useEffect(() => {
+        if (!editor) return;
+        // size the fabric canvas to the white area wrapper
+        const resize = () => {
+            const wrap = canvasWrapperRef.current;
+            if (!wrap) return;
+            const w = wrap.offsetWidth;
+            const h = wrap.offsetHeight;
+            editor.canvas.setWidth(w);
+            editor.canvas.setHeight(h);
+            editor.canvas.renderAll();
+        };
+
+        resize();
+        window.addEventListener('resize', resize);
+        // set initial brush
+        editor.canvas.isDrawingMode = true;
+        editor.canvas.freeDrawingBrush.width = 6;
+        editor.canvas.freeDrawingBrush.color = color;
+
+        return () => window.removeEventListener('resize', resize);
+    }, [editor]);
+
+    useEffect(() => {
+        if (!editor) return;
+        editor.canvas.freeDrawingBrush.color = color;
+        editor.setStrokeColor && editor.setStrokeColor(color);
+    }, [color, editor]);
+
+    const undo = () => {
+        if (!editor) return;
+        const objs = editor.canvas.getObjects();
+        if (objs.length === 0) return;
+        const last = objs.pop();
+        historyRef.current.push(last);
+        editor.canvas.remove(last);
+        editor.canvas.renderAll();
+    };
+
+    const redo = () => {
+        if (!editor) return;
+        const h = historyRef.current;
+        if (h.length === 0) return;
+        const obj = h.pop();
+        editor.canvas.add(obj);
+        editor.canvas.renderAll();
+    };
+
+    const clear = () => {
+        if (!editor) return;
+        editor.canvas.getObjects().forEach(o => editor.canvas.remove(o));
+        historyRef.current = [];
+        editor.canvas.renderAll();
+    };
+
+    const saveToImage = () => {
+        if (!editor) return;
+        const dataURL = editor.canvas.toDataURL({ format: 'png', multiplier: 2 });
+        const a = document.createElement('a');
+        a.href = dataURL;
+        // a.download = 'drawing.png';
+        a.click();
+
+        try {
+            const img = new Image();
+            img.src = dataURL;
+            img.alt = 'drawing';
+            const thumbW = 160;
+            img.style.width = thumbW + 'px';
+            img.style.height = 'auto';
+            img.style.position = 'absolute';
+            img.style.pointerEvents = 'none';
+
+            const content = contentRef.current || document.querySelector('.content');
+            if (content) {
+                const rect = content.getBoundingClientRect();
+                const maxLeft = Math.max(0, rect.width - thumbW);
+                const maxTop = Math.max(0, rect.height - (thumbW * 0.75));
+                const left = Math.floor(Math.random() * (maxLeft + 1));
+                const top = Math.floor(Math.random() * (maxTop + 1));
+                img.style.left = left + 'px';
+                img.style.top = top + 'px';
+                content.appendChild(img);
+            }
+        } catch (e) {
+            console.error('Failed to append image to content area', e);
+        }
+        clear();
+    };
+
+    return (
+        <>
+            <div className="local-panel" ref={containerRef}>
+                <div className="content"></div>
+                <div className="device-frame">
+                    <div className="white-screen" ref={canvasWrapperRef}>
+                        <FabricJSCanvas className="local-fabric-canvas" onReady={onReady} />
+                    </div>
+
+                    <div className="overlay-buttons">
+                        <div className="swatch-layout">
+                            <button className="swatch swatch-red" onClick={() => setPenColor('#e74c3c')} aria-label="red" />
+                            <button className="swatch swatch-blue" onClick={() => setPenColor('#3498db')} aria-label="blue" />
+                            <button className="swatch swatch-green" onClick={() => setPenColor('#27ae60')} aria-label="green" />
+                            <button className="swatch swatch-yellow" onClick={() => setPenColor('#f1c40f')} aria-label="yellow" />
+                            <button className="swatch swatch-purple" onClick={() => setPenColor('#9b59b6')} aria-label="purple" />
+                        </div>
+
+                        <button className="btn-done" onClick={saveToImage}></button>
+
+                        <button className="btn-undo" title="Undo" onClick={undo}></button>
+                        <button className="btn-redo" title="Redo" onClick={redo}></button>
+                        <button className="btn-clear" title="Clear" onClick={clear}></button>
+                    </div>
+                </div>
+            </div>
+            <div className="footer">
+                
+            </div>
+        </>
+    );
+}
