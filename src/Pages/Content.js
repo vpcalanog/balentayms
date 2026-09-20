@@ -8,6 +8,8 @@ import logo from "../facts-logo.png";
 // or a note is actively being drawn.
 const REFRESH_INTERVAL_MS = 60000;
 const TEMPLATES = ["red", "blue", "green", "yellow", "purple"];
+// Notes sit at a small random tilt, pinned-to-a-corkboard style.
+const MAX_TILT_DEG = 7;
 
 // Scatter positions are derived once per note and cached by id, so a refresh
 // only positions newly arrived notes instead of reshuffling the whole wall.
@@ -52,7 +54,7 @@ function buildProps(data, existing) {
     finalY = Math.min(Math.max(finalY, minPercent), maxPercent);
 
     props[image.id] = {
-      rotation: `rotate-${Math.floor(Math.random() * 13)}`,
+      rotation: Math.round((Math.random() * 2 * MAX_TILT_DEG - MAX_TILT_DEG) * 10) / 10,
       x: finalX,
       y: finalY,
       posKey,
@@ -115,14 +117,16 @@ export function Content() {
         {images.map((image) => (
           <img
             key={image.id}
-            className={`notes ${imageProps[image.id]?.rotation || ""}`}
+            className="notes"
             src={noteUrl(image.name)}
             style={{
               left: `${imageProps[image.id]?.x}%`,
               top: `${imageProps[image.id]?.y}%`,
               position: "absolute",
               transform: imageProps[image.id]?.inCircle
-                ? `translate(-50%, -50%) scale(${imageProps[image.id]?.scale})`
+                ? `translate(-50%, -50%) rotate(${
+                    imageProps[image.id]?.rotation ?? 0
+                  }deg) scale(${imageProps[image.id]?.scale})`
                 : "none",
               zIndex: imageProps[image.id]?.depth ?? 1,
             }}
