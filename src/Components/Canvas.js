@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { memo, useEffect, useState, useRef } from "react";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { saveNote } from '../services/noteStorage';
@@ -14,11 +14,14 @@ import templatePurple from './template_purple.png';
 const MAX_CANVAS_SIZE = 500;
 const MIN_CANVAS_SIZE = 260;
 
-export default function Canvas({ template = 'red', onSubmitted }) {
+function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
   const { editor, onReady } = useFabricJSEditor();
   const fileInputRef = useRef(null);
   const stageRef = useRef(null);
+  const drawingChangeRef = useRef(onDrawingChange);
   const [canvasSize, setCanvasSize] = useState(MAX_CANVAS_SIZE);
+
+  drawingChangeRef.current = onDrawingChange;
   const history = [];
   const [color, setColor] = useState("#35363a");
   const [active, setActive] = useState(false);
@@ -61,6 +64,32 @@ export default function Canvas({ template = 'red', onSubmitted }) {
 
     return () => {
       document.removeEventListener('auxclick', handleAuxClick);
+    };
+  }, [editor]);
+
+  // Tells the parent when a stroke is in progress, so the notes wall can hold
+  // its refresh until the pen is lifted.
+  useEffect(() => {
+    if (!editor || !editor.canvas) {
+      return undefined;
+    }
+
+    const canvas = editor.canvas;
+    const report = (active) => {
+      if (typeof drawingChangeRef.current === 'function') {
+        drawingChangeRef.current(active);
+      }
+    };
+    const onDown = () => report(true);
+    const onUp = () => report(false);
+
+    canvas.on('mouse:down', onDown);
+    canvas.on('mouse:up', onUp);
+
+    return () => {
+      canvas.off('mouse:down', onDown);
+      canvas.off('mouse:up', onUp);
+      report(false);
     };
   }, [editor]);
 
@@ -244,7 +273,7 @@ export default function Canvas({ template = 'red', onSubmitted }) {
 
     try {
       await saveNote(blob);
-      toast.success("Your note has been submitted, please wait as the administrators review your message");
+      toast.success("Your note is up on the wall!");
       clear();
       if (typeof onSubmitted === 'function') {
         onSubmitted();
@@ -414,3 +443,6 @@ export default function Canvas({ template = 'red', onSubmitted }) {
     </div>
   );
 }
+
+// Memoised so a notes-wall refresh never re-renders the drawing surface.
+export default memo(Canvas);

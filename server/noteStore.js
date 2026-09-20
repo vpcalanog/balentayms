@@ -6,6 +6,8 @@ const { NOTES_DIR, INDEX_FILE } = require('./config');
 // Entries mirror the shape the app previously received from the remote
 // `entries` table: { id, name, status, updated_by, created_at }.
 // `name` is the PNG filename on disk, so existing consumers keep working.
+// New submissions are approved (`status: true`) on arrival and appear on the
+// wall straight away; admins can still hide one from /administrasyones.
 
 let writeQueue = Promise.resolve();
 
@@ -72,7 +74,7 @@ async function saveNote(buffer) {
     const entry = {
       id: entries.reduce((max, e) => Math.max(max, e.id || 0), 0) + 1,
       name,
-      status: false,
+      status: true,
       updated_by: null,
       created_at: new Date().toISOString(),
     };

@@ -10,7 +10,7 @@ const INDEX_FILE = path.resolve(
   process.env.NOTES_INDEX_FILE || path.join(NOTES_DIR, 'entries.json')
 );
 
-const PORT = Number(process.env.NOTES_PORT || 4000);
+const PORT = Number(process.env.NOTES_PORT || 4210);
 
 // Max accepted PNG payload (bytes). Canvas exports are ~1-2MB at multiplier 2.
 const MAX_UPLOAD_BYTES = Number(process.env.NOTES_MAX_UPLOAD_BYTES || 10 * 1024 * 1024);

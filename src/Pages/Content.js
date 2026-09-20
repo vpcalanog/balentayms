@@ -4,8 +4,9 @@ import Canvas from "../Components/Canvas";
 import { listNotes, noteUrl } from "../services/noteStorage";
 import logo from "../facts-logo.png";
 
-// The wall re-renders on this cadence, except while a note is being previewed.
-const REFRESH_INTERVAL_MS = 15000;
+// The wall re-renders on this cadence, except while a note is being previewed
+// or a note is actively being drawn.
+const REFRESH_INTERVAL_MS = 60000;
 const TEMPLATES = ["red", "blue", "green", "yellow", "purple"];
 
 // Scatter positions are derived once per note and cached by id, so a refresh
@@ -69,7 +70,13 @@ export function Content() {
   const [preview, setPreview] = useState(null);
   const [imageProps, setImageProps] = useState({});
   const [template, setTemplate] = useState("red");
+  const [isDrawing, setIsDrawing] = useState(false);
   const propsRef = useRef({});
+
+  // Stable identities keep the memoised Canvas from re-rendering on refresh.
+  const handleDrawingChange = useCallback((active) => {
+    setIsDrawing(active);
+  }, []);
 
   const getImages = useCallback(async () => {
     try {
@@ -87,14 +94,15 @@ export function Content() {
     getImages();
   }, [getImages]);
 
-  // Auto refresh every 15s, suspended while a note is focused for preview so
-  // the wall never shifts underneath the person looking at it.
+  // Auto refresh every minute, suspended while a note is focused for preview
+  // and while a stroke is in progress, so the wall never shifts underneath the
+  // person looking at it or interrupts someone mid-drawing.
   useEffect(() => {
-    if (preview !== null) return undefined;
+    if (preview !== null || isDrawing) return undefined;
 
     const intervalId = setInterval(getImages, REFRESH_INTERVAL_MS);
     return () => clearInterval(intervalId);
-  }, [preview, getImages]);
+  }, [preview, isDrawing, getImages]);
 
   return (
     <div className="arcade-shell">
@@ -126,7 +134,9 @@ export function Content() {
         <p className="wall-status" aria-live="polite">
           {preview !== null
             ? "PAUSED — note focused"
-            : `AUTO-REFRESH 15s — ${images.length} note${images.length === 1 ? "" : "s"} on the wall`}
+            : isDrawing
+            ? "PAUSED — drawing in progress"
+            : `AUTO-REFRESH 60s — ${images.length} note${images.length === 1 ? "" : "s"} on the wall`}
         </p>
       </section>
 
@@ -149,7 +159,11 @@ export function Content() {
             ))}
           </div>
         </div>
-        <Canvas template={template} onSubmitted={getImages} />
+        <Canvas
+          template={template}
+          onSubmitted={getImages}
+          onDrawingChange={handleDrawingChange}
+        />
       </aside>
 
       {preview !== null && (

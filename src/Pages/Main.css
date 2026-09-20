@@ -16,7 +16,7 @@ body {
   z-index: 0 !important;
   width: 70vw;
   opacity: 0.35;
-  filter: drop-shadow(0 0 12px rgba(160, 101, 255, 0.25));
+  filter: drop-shadow(0 0 12px rgba(160, 16, 16, 0.25));
 }
 .modify{
   font-size: 1rem;
@@ -35,7 +35,7 @@ body {
 ::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;
-	background-color: var(--neon-violet);
+	background-color: var(--logo-crimson);
 	background-image: -webkit-linear-gradient(90deg,
 											  transparent,
 											  rgba(0, 0, 0, 0.4) 50%,

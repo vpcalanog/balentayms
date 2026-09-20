@@ -34,8 +34,8 @@
     width: 40px;
     height: 40px;
     border-radius: var(--radius);
-    border: 2px solid var(--neon-violet);
-    background: rgba(160, 101, 255, 0.18);
+    border: 2px solid var(--logo-crimson);
+    background: rgba(160, 16, 16, 0.18);
     fill: var(--text-primary);
     stroke: var(--text-primary);
     cursor: pointer;
@@ -44,17 +44,17 @@
 }
 .side input:hover,
 .side button:hover {
-    border-color: var(--neon-cyan);
-    background: rgba(56, 246, 255, 0.22);
-    fill: var(--neon-cyan);
-    stroke: var(--neon-cyan);
-    box-shadow: var(--glow-cyan);
+    border-color: var(--neon-ember);
+    background: rgba(255, 122, 69, 0.22);
+    fill: var(--neon-ember);
+    stroke: var(--neon-ember);
+    box-shadow: var(--glow-ember);
     transform: translateY(-2px);
 }
 .side button:active {
     transform: translateY(1px);
     box-shadow: none;
-    background: rgba(56, 246, 255, 0.35);
+    background: rgba(255, 122, 69, 0.35);
 }
 .side input {
     -webkit-appearance: none;
@@ -87,9 +87,9 @@
     justify-content: center;
 }
 .canvas-container {
-    border: 3px solid var(--neon-pink);
+    border: 3px solid var(--neon-red);
     border-radius: var(--radius);
-    box-shadow: var(--glow-pink);
+    box-shadow: var(--glow-red);
     background: var(--arcade-panel-solid);
 }
 
@@ -103,7 +103,7 @@
     gap: 2px 10px;
     width: 100%;
     padding: 8px;
-    border: 2px dashed rgba(56, 246, 255, 0.35);
+    border: 2px dashed rgba(255, 122, 69, 0.35);
     border-radius: var(--radius);
     color: var(--text-muted);
     font-size: 0.8rem;
@@ -121,18 +121,18 @@
     width: 40px;
     height: 40px;
     border-radius: var(--radius);
-    border: 2px solid var(--neon-amber);
-    background: rgba(255, 200, 87, 0.18);
-    fill: var(--neon-amber);
-    stroke: var(--neon-amber);
+    border: 2px solid var(--neon-ember);
+    background: rgba(255, 122, 69, 0.18);
+    fill: var(--neon-ember);
+    stroke: var(--neon-ember);
     cursor: pointer;
     transition: background var(--speed) ease, box-shadow var(--speed) ease;
 }
 .info:hover {
-    background: var(--neon-amber);
+    background: var(--neon-ember);
     fill: var(--arcade-bg-deep);
     stroke: var(--arcade-bg-deep);
-    box-shadow: 0 0 14px rgba(255, 200, 87, 0.7);
+    box-shadow: 0 0 14px rgba(255, 122, 69, 0.7);
 }
 .modal {
     position: fixed;
@@ -141,12 +141,12 @@
     transform: translate(-50%, -50%);
     padding: 24px;
     z-index: 40;
-    border: 3px solid var(--neon-violet);
+    border: 3px solid var(--logo-crimson);
     border-radius: var(--radius);
     width: 70vw;
     max-height: 75vh;
     background: var(--arcade-panel-solid);
-    box-shadow: 0 0 30px rgba(160, 101, 255, 0.5);
+    box-shadow: 0 0 30px rgba(160, 16, 16, 0.5);
     text-align: left;
     color: var(--text-primary);
     font-size: 1.05rem;
@@ -169,15 +169,15 @@
 }
 .modal h1 {
     text-align: center;
-    color: var(--neon-cyan);
+    color: var(--neon-ember);
     font-family: var(--font-display);
     font-size: 1rem;
     letter-spacing: 0.08em;
-    text-shadow: var(--glow-cyan);
+    text-shadow: var(--glow-ember);
 }
 .modal p:nth-child(2n-1) {
     font-weight: 700;
-    color: var(--neon-amber);
+    color: var(--neon-ember);
 }
 .modal p:nth-child(2n) {
     text-indent: 20px;

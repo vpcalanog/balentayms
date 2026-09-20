@@ -12,7 +12,7 @@ server (`server/`, built on Node's `http` module — no extra dependencies).
 Run both processes during development:
 
 ```bash
-npm run server   # notes API on http://localhost:4000
+npm run server   # notes API on http://localhost:4210
 npm start        # React dev server on http://localhost:3000 (proxies /api)
 ```
 
@@ -20,7 +20,7 @@ npm start        # React dev server on http://localhost:3000 (proxies /api)
 | --- | --- | --- |
 | Storage folder | `NOTES_DIR` | `./local-notes` |
 | Entry index file | `NOTES_INDEX_FILE` | `<NOTES_DIR>/entries.json` |
-| API port | `NOTES_PORT` | `4000` |
+| API port | `NOTES_PORT` | `4210` |
 | Max upload size | `NOTES_MAX_UPLOAD_BYTES` | `10485760` |
 | Client API base | `REACT_APP_NOTES_API` | `/api/notes` |
 
@@ -28,6 +28,9 @@ Each submission is written as `note-<ISO timestamp>-<uuid>.png` with the `wx`
 flag, so filenames are unique and an existing file is never overwritten.
 Metadata (`id`, `name`, `status`, `updated_by`, `created_at`) lives in
 `entries.json` alongside the images. The storage folder is git-ignored.
+
+New submissions arrive approved (`status: true`) and show on the wall on the
+next refresh; admins can hide one from `/administrasyones`.
 
 ### API
 

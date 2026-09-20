@@ -1,22 +1,33 @@
-/* Arcade design tokens shared by every screen. */
+/* Arcade design tokens shared by every screen.
+   The palette is sampled from the FACTS logo: crimson #a01010 (ring and
+   wordmark), bright red #e00000 (star highlight), dark maroon #301010 (star
+   shadow) and white. Neon variants are those hues pushed to arcade
+   brightness; white carries the high-contrast duties the logo gives it. */
 :root {
-  --arcade-bg: #0a0618;
-  --arcade-bg-deep: #05030f;
-  --arcade-panel: rgba(18, 10, 40, 0.82);
-  --arcade-panel-solid: #120a28;
-  --arcade-grid: rgba(122, 61, 255, 0.16);
+  /* Sampled straight from the logo */
+  --logo-crimson: #a01010;
+  --logo-red: #e00000;
+  --logo-maroon: #301010;
+  --logo-white: #ffffff;
 
-  --neon-pink: #ff3d78;
-  --neon-cyan: #38f6ff;
-  --neon-violet: #a065ff;
-  --neon-lime: #7dff8a;
-  --neon-amber: #ffc857;
+  --arcade-bg: #180a0b;
+  --arcade-bg-deep: #0c0505;
+  --arcade-panel: rgba(38, 14, 15, 0.86);
+  --arcade-panel-solid: #1d0a0b;
+  --arcade-grid: rgba(224, 0, 0, 0.14);
 
-  --text-primary: #f3ecff;
-  --text-muted: #b6a9d8;
+  /* Neon accents, all within the logo's red family */
+  --neon-red: #ff2b2b;
+  --neon-crimson: #d4232b;
+  --neon-ember: #ff7a45;
+  --neon-glow: #ff5a5a;
 
-  --glow-pink: 0 0 6px rgba(255, 61, 120, 0.85), 0 0 18px rgba(255, 61, 120, 0.45);
-  --glow-cyan: 0 0 6px rgba(56, 246, 255, 0.85), 0 0 18px rgba(56, 246, 255, 0.4);
+  --text-primary: #ffeceb;
+  --text-muted: #d7a3a3;
+
+  --glow-red: 0 0 6px rgba(255, 43, 43, 0.85), 0 0 18px rgba(224, 0, 0, 0.5);
+  --glow-ember: 0 0 6px rgba(255, 122, 69, 0.85), 0 0 18px rgba(255, 122, 69, 0.4);
+  --glow-white: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 18px rgba(255, 160, 160, 0.45);
 
   --font-display: 'Press Start 2P', 'Pixelify Sans', 'Courier New', monospace;
   --font-body: 'Pixelify Sans', 'Segoe UI', system-ui, sans-serif;
@@ -30,9 +41,10 @@
   image-rendering: pixelated;
 }
 
-/* Shared focus treatment: always visible, never colour-only. */
+/* Shared focus treatment: white, for maximum contrast on the red palette,
+   and always visible rather than colour-only. */
 :where(button, a, input, [role='radio']):focus-visible {
-  outline: 3px solid var(--neon-cyan);
+  outline: 3px solid var(--logo-white);
   outline-offset: 3px;
 }
 
@@ -44,8 +56,8 @@
 }
 
 @keyframes arcade-pulse {
-  0%, 100% { box-shadow: var(--glow-pink); }
-  50% { box-shadow: 0 0 10px rgba(255, 61, 120, 1), 0 0 28px rgba(160, 101, 255, 0.6); }
+  0%, 100% { box-shadow: var(--glow-red); }
+  50% { box-shadow: 0 0 10px rgba(255, 43, 43, 1), 0 0 28px rgba(224, 0, 0, 0.6); }
 }
 
 @keyframes arcade-scan {
