@@ -175,9 +175,9 @@
   z-index: 1000;
   max-width: 45%;
   max-height: 85vh;
-  border: 3px solid var(--logo-white);
+  /* border: 3px solid var(--logo-white); */
   border-radius: var(--radius);
-  box-shadow: var(--glow-white);
+  /* box-shadow: var(--glow-white); */
   animation: zoomIn 0.3s ease-out;
   cursor: zoom-out;
 }

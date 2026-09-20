@@ -11,54 +11,79 @@ const TEMPLATES = ["red", "blue", "green", "yellow", "purple"];
 // Notes sit at a small random tilt, pinned-to-a-corkboard style.
 const MAX_TILT_DEG = 7;
 
+// Keeps a note's half-width/height inside the wall so nothing clips.
+const EDGE_X = 9;
+const EDGE_Y = 10;
+// Keep-out ellipse around the centre logo, in percent of the wall. It is
+// tested against a note's centre, so it carries the logo's own radius plus a
+// note's half-extent; otherwise notes centred just outside still cover it.
+const LOGO_RX = 22;
+const LOGO_RY = 24;
+// Candidates weighed per placement. More means a more even wall.
+const CANDIDATES = 40;
+
+function randomPoint() {
+  return {
+    x: EDGE_X + Math.random() * (100 - 2 * EDGE_X),
+    y: EDGE_Y + Math.random() * (100 - 2 * EDGE_Y),
+  };
+}
+
+function overlapsLogo(x, y) {
+  const dx = (x - 50) / LOGO_RX;
+  const dy = (y - 50) / LOGO_RY;
+  return dx * dx + dy * dy < 1;
+}
+
+function nearestDistance(point, placed) {
+  let nearest = Infinity;
+  for (let i = 0; i < placed.length; i++) {
+    const dx = point.x - placed[i].x;
+    const dy = point.y - placed[i].y;
+    const distance = dx * dx + dy * dy;
+    if (distance < nearest) nearest = distance;
+  }
+  return nearest;
+}
+
+// Best-candidate (Mitchell) sampling: throw several darts and keep the one
+// furthest from every note already on the wall. That fills the whole area
+// evenly at any count, rather than growing outwards from one spot.
+function pickPoint(placed) {
+  let best = null;
+  let bestDistance = -1;
+
+  for (let i = 0; i < CANDIDATES; i++) {
+    const candidate = randomPoint();
+    if (overlapsLogo(candidate.x, candidate.y)) continue;
+
+    const distance = nearestDistance(candidate, placed);
+    if (distance > bestDistance) {
+      bestDistance = distance;
+      best = candidate;
+    }
+  }
+
+  return best || randomPoint();
+}
+
 // Scatter positions are derived once per note and cached by id, so a refresh
 // only positions newly arrived notes instead of reshuffling the whole wall.
 function buildProps(data, existing) {
   const props = { ...existing };
-  const usedPositions = new Set(
-    Object.values(existing).map((p) => p.posKey).filter(Boolean)
-  );
+  const placed = Object.values(props).map((p) => ({ x: p.x, y: p.y }));
 
-  data.forEach((image, index) => {
+  data.forEach((image) => {
     if (props[image.id]) return;
 
-    let x, y, posKey;
-    let attempts = 0;
-    const maxAttempts = 50;
-
-    do {
-      const minRadius = 10;
-      const maxRadius = 55;
-      const radius = Math.random() * (maxRadius - minRadius) + minRadius;
-
-      const baseAngle = index * ((2 * Math.PI) / Math.min(data.length, 12));
-      const randomOffset = Math.random() * 0.8 - 0.4;
-      const angle = baseAngle + randomOffset;
-
-      x = 52 + radius * Math.cos(angle);
-      y = 48 + radius * Math.sin(angle);
-
-      posKey = `${Math.round(x / 15)},${Math.round(y / 15)}`;
-      attempts++;
-    } while (usedPositions.has(posKey) && attempts < maxAttempts);
-
-    usedPositions.add(posKey);
-
-    let finalX = x + (Math.random() * 4 - 2);
-    let finalY = y + (Math.random() * 4 - 2);
-
-    const minPercent = 8;
-    const maxPercent = 92;
-
-    finalX = Math.min(Math.max(finalX, minPercent), maxPercent);
-    finalY = Math.min(Math.max(finalY, minPercent), maxPercent);
+    const point = pickPoint(placed);
+    placed.push(point);
 
     props[image.id] = {
-      rotation: Math.round((Math.random() * 2 * MAX_TILT_DEG - MAX_TILT_DEG) * 10) / 10,
-      x: finalX,
-      y: finalY,
-      posKey,
-      inCircle: true,
+      x: point.x,
+      y: point.y,
+      rotation:
+        Math.round((Math.random() * 2 * MAX_TILT_DEG - MAX_TILT_DEG) * 10) / 10,
       scale: 0.9 + Math.random() * 0.2,
       depth: Math.floor(Math.random() * 10),
     };
@@ -123,11 +148,9 @@ export function Content() {
               left: `${imageProps[image.id]?.x}%`,
               top: `${imageProps[image.id]?.y}%`,
               position: "absolute",
-              transform: imageProps[image.id]?.inCircle
-                ? `translate(-50%, -50%) rotate(${
-                    imageProps[image.id]?.rotation ?? 0
-                  }deg) scale(${imageProps[image.id]?.scale})`
-                : "none",
+              transform: `translate(-50%, -50%) rotate(${
+                imageProps[image.id]?.rotation ?? 0
+              }deg) scale(${imageProps[image.id]?.scale ?? 1})`,
               zIndex: imageProps[image.id]?.depth ?? 1,
             }}
             onClick={() => setPreview(image.name)}
