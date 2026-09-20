@@ -402,11 +402,11 @@ function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
         style={{ display: "none" }}
         onChange={(e) => handleFileInputChange(e)}
       />
-      <button className='info' onClick={toggleModal}>
+      {/* <button className='info' onClick={toggleModal}>
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.6-8.5h0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
-      </button>
+      </button> */}
       {/* <div className="tooltip">
           <p>Ctrl + C = Toggle Draw</p>
           <p>Middle Mouse = Toggle Size</p>
@@ -414,7 +414,7 @@ function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
           <p>Ctrl + Y = Redo</p>
           <p>Ctrl + Z = Undo</p>
         </div> */}
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
             <h1>Rules and Guidelines</h1>
@@ -438,7 +438,7 @@ function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
             </ul>
           </div>
         </div>
-      )}
+      )} */}
       <ConfirmModal 
         isOpen={isConfirmModalOpen}
         onConfirm={handleConfirmSubmit}

@@ -82,6 +82,10 @@
     width: 84px;
 }
 
+.controls label{
+    font-size: 0.5rem;
+}
+
 /* Drawing stage */
 .center {
     width: 100%;
