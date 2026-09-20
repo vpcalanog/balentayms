@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  background: #631017;
+  background: var(--arcade-bg-deep);
   width: 100vw;
   height: 100vh;
 }

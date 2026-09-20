@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { v4 as uuidv4 } from "uuid";
+import { saveNote } from '../services/noteStorage';
 import './Canvas.css';
 import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
@@ -12,14 +11,18 @@ import templateGreen from './template_green.png';
 import templateYellow from './template_yellow.png';
 import templatePurple from './template_purple.png';
 
-export default function Canvas({ template = 'red' }) {
+const MAX_CANVAS_SIZE = 500;
+const MIN_CANVAS_SIZE = 260;
+
+export default function Canvas({ template = 'red', onSubmitted }) {
   const { editor, onReady } = useFabricJSEditor();
   const fileInputRef = useRef(null);
+  const stageRef = useRef(null);
+  const [canvasSize, setCanvasSize] = useState(MAX_CANVAS_SIZE);
   const history = [];
   const [color, setColor] = useState("#35363a");
   const [active, setActive] = useState(false);
   const [size, setSize] = useState('');
-  const supabase = useSupabaseClient();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
@@ -129,12 +132,8 @@ export default function Canvas({ template = 'red' }) {
     const templateImagePath = templateImages[template] || templateRed;
 
     fabric.Image.fromURL(templateImagePath, (image) => {
-      const screenWidth = window.innerWidth;
-
-      if (screenWidth < 600) {
-        image.scaleToWidth(470);
-        image.scaleToHeight(470);
-      }
+      image.scaleToWidth(canvasSize);
+      image.scaleToHeight(canvasSize);
 
       editor.canvas.setBackgroundImage(
         image,
@@ -143,15 +142,40 @@ export default function Canvas({ template = 'red' }) {
     });
   };
 
+  // The canvas keeps a square aspect and tracks the width of its container so
+  // it fits the submission panel on any breakpoint.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) {
+      return undefined;
+    }
+
+    const measure = () => {
+      const available = stage.clientWidth;
+      if (!available) return;
+      const next = Math.round(
+        Math.max(MIN_CANVAS_SIZE, Math.min(MAX_CANVAS_SIZE, available))
+      );
+      setCanvasSize((current) => (current === next ? current : next));
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     if (!editor || !fabric) {
       return;
     }
-    editor.canvas.setHeight(500);
-    editor.canvas.setWidth(500);
+    editor.canvas.setHeight(canvasSize);
+    editor.canvas.setWidth(canvasSize);
     addBackground();
     editor.canvas.renderAll();
-  }, [editor, template]);
+  }, [editor, template, canvasSize]);
 
   const toggleSize = () => {
     if(editor.canvas.freeDrawingBrush.width === 10){
@@ -202,54 +226,6 @@ export default function Canvas({ template = 'red' }) {
     editor.addText("insert text");
   };
 
-  async function logImages(logs){
-    const newLog = {
-        name: logs,
-    }
-    const { data,error } = await supabase
-    .from('entries')
-    .insert(newLog)
-    .select()
-
-    if (error) {
-        console.log(error)
-    }
-    if (data) {
-        console.log(data)
-    }
-  };
-
-  // const saveToImage = async () => {
-  //   const isConfirmed = window.confirm("Are you sure you want to submit the canvas?");
-    
-  //   if (isConfirmed) {
-  //     if (!editor || !fabric) {
-  //       return;
-  //     }
-  
-  //     const dataURL = editor.canvas.toDataURL({
-  //       format: "png",
-  //       multiplier: 2,
-  //     });
-  
-  //     const blob = await fetch(dataURL).then((res) => res.blob());
-  //     const uid = uuidv4();
-  
-  //     const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
-  
-  //     if (data) {
-  //       // alert("Your note has been submitted, please wait as the administrators review your message");
-  //       toast.success("Your note has been submitted, please wait as the administrators review your message");
-  //       logImages(uid);
-  //       clear();
-  //     } else {
-  //       console.error("Error uploading image:", error);
-  //     }
-  //   } else {
-  //     // console.log("Submission canceled.");
-  //     toast.error("Submission canceled.");
-  //   }
-    
   const saveToImage = async () => {
     setConfirmModalOpen(true);
   };
@@ -258,24 +234,26 @@ export default function Canvas({ template = 'red' }) {
     if (!editor || !fabric) {
       return;
     }
-  
+
     const dataURL = editor.canvas.toDataURL({
       format: "png",
       multiplier: 2,
     });
-  
+
     const blob = await fetch(dataURL).then((res) => res.blob());
-    const uid = uuidv4();
-  
-    const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
-  
-    if (data) {
+
+    try {
+      await saveNote(blob);
       toast.success("Your note has been submitted, please wait as the administrators review your message");
-      logImages(uid);
       clear();
-    } else {
-      console.error("Error uploading image:", error);
+      if (typeof onSubmitted === 'function') {
+        onSubmitted();
+      }
+    } catch (error) {
+      console.error("Error saving note:", error);
+      toast.error("Your note could not be saved. Please try again.");
     }
+
     setConfirmModalOpen(false);
   };
 
@@ -344,7 +322,7 @@ export default function Canvas({ template = 'red' }) {
         <label>Select Color</label>
         </div>
       </div>
-      <div className="center">
+      <div className="center" ref={stageRef}>
         <FabricJSCanvas className="sample-canvas" onReady={onReady} />
       </div>
       <div className="side">

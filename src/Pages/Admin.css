@@ -10,8 +10,10 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background: rgba(255, 255, 255, 0.603);
-    border-radius: 25px;
+    background: var(--arcade-panel);
+    border: 2px solid rgba(56, 246, 255, 0.35);
+    box-shadow: inset 0 0 60px rgba(5, 3, 15, 0.8);
+    border-radius: var(--radius);
     gap: 2.5vw;
     padding: 2.5vh 2.5vw;
     overflow: auto;
@@ -49,27 +51,41 @@ button:hover {
   width: 8vw;
   height: 5vh;
   margin: auto;
-  border-radius: 25px;
-  font-weight: 700;
-  color: #ffffff;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
   position: relative;
   z-index: 20000;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease;
 }
 .active {
-  background: #00ad0e;
-  border: 2px solid #008d0c;
+  background: rgba(125, 255, 138, 0.18);
+  border: 2px solid var(--neon-lime);
+  color: var(--neon-lime);
 }
 .active:hover {
-  background: #00ad0e7c;
-  border: 2px solid #008d0c7e;
+  background: var(--neon-lime);
+  color: var(--arcade-bg-deep);
+  box-shadow: 0 0 14px rgba(125, 255, 138, 0.6);
+  transform: translateY(-2px);
 }
 .inactive {
-  border: 2px solid #e41e3f;
-  background: #cf0023;
+  border: 2px solid var(--neon-pink);
+  background: rgba(255, 61, 120, 0.18);
+  color: var(--neon-pink);
 }
 .inactive:hover {
-  border: 2px solid #e41e3f7a;
-  background: #cf002377;
+  background: var(--neon-pink);
+  color: var(--arcade-bg-deep);
+  box-shadow: var(--glow-pink);
+  transform: translateY(-2px);
+}
+.active:active,
+.inactive:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 .log-form {
@@ -82,25 +98,42 @@ button:hover {
   position: relative;
   z-index: 200000;
 }
+.log-form label {
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  margin-bottom: 6px;
+}
 .log-form input {
   width: 20vw;
-  margin-bottom: 10px;
-  padding: 5px;
-  border: 0;
-  border-radius: 25px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 2px solid var(--neon-violet);
+  border-radius: var(--radius);
+  background: rgba(5, 3, 15, 0.8);
+  color: var(--text-primary);
 }
 
 .login {
-  padding: 10px;
-  border: 2px solid #e41e3f;
-  border-radius: 25px;
-  background: #cf0023;
-  color: #ffffff;
+  padding: 12px 18px;
+  border: 2px solid var(--neon-cyan);
+  border-radius: var(--radius);
+  background: rgba(56, 246, 255, 0.16);
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease;
 }
 .login:hover {
-  border: 2px solid #e41e3f;
-  background: #ffffff;
-  color: #cf0023;
+  background: var(--neon-cyan);
+  color: var(--arcade-bg-deep);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px);
+}
+.login:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 .signIn {
@@ -111,7 +144,7 @@ button:hover {
   color: gray;
 }
 
-.info {
+.admin-content .info {
   position: fixed;
   z-index: 100001;
   top: 0;
@@ -120,22 +153,23 @@ button:hover {
   padding: 5px;
   width: 40px;
   height: 40px;
-  border-radius: 100%;
-  border: 2px solid #e41e3f;
-  background: #f33e59be;
-  fill: #ffffff;
-  stroke: #ffffff;
+  border-radius: var(--radius);
+  border: 2px solid var(--neon-cyan);
+  background: rgba(56, 246, 255, 0.16);
+  fill: var(--neon-cyan);
+  stroke: var(--neon-cyan);
+  cursor: pointer;
 }
 
-.info:hover {
-  border: 2px solid #e41e3f;
-  background: #ffffff;
-  fill: #e41e3f;
-  stroke: #e41e3f;
+.admin-content .info:hover {
+  background: var(--neon-cyan);
+  fill: var(--arcade-bg-deep);
+  stroke: var(--arcade-bg-deep);
+  box-shadow: var(--glow-cyan);
 }
 
-.zoom-bg.empty {
-  display: none !important;
+.modify {
+  color: var(--text-muted);
 }
 
 @media screen and (max-width: 600px) {
@@ -150,4 +184,34 @@ button:hover {
   .log-form input {
     width: 60vw;
   }
+}
+
+/* "Go back" control, previously styled on the content page. */
+.add {
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+  padding: 12px 18px;
+  border: 2px solid var(--neon-pink);
+  border-radius: var(--radius);
+  background: rgba(255, 61, 120, 0.18);
+  color: var(--neon-pink);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  z-index: 10000;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease;
+}
+
+.add:hover {
+  background: var(--neon-pink);
+  color: var(--arcade-bg-deep);
+  box-shadow: var(--glow-pink);
+  transform: translateY(-2px);
+}
+
+.add:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }

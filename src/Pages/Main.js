@@ -1,9 +1,8 @@
 import React from "react";
 import "./Main.css";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Background } from "./Background";
 import { Content } from "./Content";
-import { AddNew } from "./AddNew";
 import { Admin } from "./Admin";
 import { ToastContainer, Bounce } from "react-toastify";
 import bitmap from "../bitmap.svg";
@@ -14,7 +13,8 @@ const Main = () => {
       <Background />
       <Routes>
         <Route path="/" exact element={<Content />} />
-        <Route path="/additional" element={<AddNew />} />
+        {/* Submitting now lives on the combined wall; keep the old link working. */}
+        <Route path="/additional" element={<Navigate to="/" replace />} />
         <Route path="/administrasyones" element={<Admin />} />
       </Routes>
       <img src={bitmap} alt="FACTS Logo" className="logo" />

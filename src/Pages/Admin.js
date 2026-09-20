@@ -1,10 +1,10 @@
 import { React, useEffect, useState } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Link } from 'react-router-dom';
+import { listNotes, noteUrl, updateNote } from '../services/noteStorage';
 import './Admin.css';
 
 export function Admin(props) {
-    const CDNURL = 'https://jlyrxkjakblqzeppreod.supabase.co/storage/v1/object/public/Notes/valentines/';
     const [images, setImages] = useState([]);
     const [update, setUpdate] = useState([]);
     const supabase = useSupabaseClient();
@@ -56,13 +56,10 @@ export function Admin(props) {
     };
 
     async function getImages() {
-        const { data, error } = await supabase
-            .from('entries')
-            .select('*')
-            .order('id', { ascending: false });
-
-        if (data !== null) {
-            setImages(data);
+        try {
+            setImages(await listNotes());
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -73,21 +70,14 @@ export function Admin(props) {
     async function changeStatus() {
         if (!update.id || !current.username) return;
 
-        const { data, error } = await supabase
-            .from('entries')
-            .update({
-                name: update.name,
+        try {
+            await updateNote(update.id, {
                 status: !update.status,
                 updated_by: current.username,
-            })
-            .eq('id', update.id)
-            .select();
-
-        if (data) {
+            });
             getImages();
-            console.log('Status changed');
-        } else {
-            console.log(error);
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -105,8 +95,8 @@ export function Admin(props) {
                     <>
                         {images.map((image) => {
                             return (
-                                <div className='admin-notes'>
-                                    <img className='notes' src={CDNURL + image.name} alt={image.name} onClick={() => setPreview(image.name)} />
+                                <div className='admin-notes' key={image.id}>
+                                    <img className='notes' src={noteUrl(image.name)} alt={image.name} onClick={() => setPreview(image.name)} />
                                     {image.status === true
                                         ? <button className='active' onClick={() => setUpdate(image)}> Active </button>
                                         : <button className='inactive' onClick={() => setUpdate(image)}> Inactive </button>}
@@ -135,16 +125,11 @@ export function Admin(props) {
             <Link to='/'>
                 <button className='add' onClick={handleLogout}>Go back</button>
             </Link>
-            {preview !== null
-                ?
-                <div className='zoom-bg'>
-                    <img className='zoom' src={CDNURL + preview} onClick={() => setPreview(null)} />
+            {preview !== null && (
+                <div className='zoom-bg' onClick={() => setPreview(null)}>
+                    <img className='zoom' src={noteUrl(preview)} alt='Note preview' onClick={() => setPreview(null)} />
                 </div>
-                :
-                <div className='zoom-bg empty'>
-                    <img className='zoom empty' src={CDNURL + preview} onClick={() => setPreview(null)} />
-                </div>
-            }
+            )}
         </>
     )
 }

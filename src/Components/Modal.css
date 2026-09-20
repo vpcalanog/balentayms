@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(5, 3, 15, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,14 +15,16 @@
 }
 
 .modal-content {
-  background: #ffffff;
+  background: var(--arcade-panel-solid);
+  border: 3px solid var(--neon-pink);
+  box-shadow: var(--glow-pink);
   padding: 24px;
-  border-radius: 25px;
+  border-radius: var(--radius);
   width: 90vw;
   max-width: 500px;
   box-sizing: border-box;
   text-align: center;
-  color: #e41e3f;
+  color: var(--text-primary);
   z-index: 1000;
   margin: 0 auto;
 
@@ -41,14 +43,17 @@
 }
 
 .modal-title {
-  font-size: 1.4rem;
-  font-weight: 900;
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-shadow: var(--glow-cyan);
   margin-bottom: 20px;
   text-align: center;
 }
 
 .modal-message {
-  color: #e41e3f;
+  color: var(--text-muted);
   margin-bottom: 24px;
   line-height: 1.5;
   font-size: 1.2rem;
@@ -62,34 +67,44 @@
 }
 
 .modal-button {
-  padding: 10px 20px;
-  border-radius: 25px;
+  padding: 12px 20px;
+  border-radius: var(--radius);
   cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  width: 120px;
-  border: 2px solid #e41e3f;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease,
+    background var(--speed) ease;
+  width: 130px;
 }
 
 .cancel-button {
-  background: #ffffff;
-  color: #e41e3f;
+  border: 2px solid var(--neon-violet);
+  background: transparent;
+  color: var(--text-primary);
 }
 
 .cancel-button:hover {
-  background: #f33e59be;
-  color: #ffffff;
+  background: rgba(160, 101, 255, 0.28);
+  transform: translateY(-2px);
 }
 
 .submit-button {
-  background: #f33e59be;
-  color: #ffffff;
+  border: 2px solid var(--neon-lime);
+  background: rgba(125, 255, 138, 0.18);
+  color: var(--neon-lime);
 }
 
 .submit-button:hover {
-  background: #ffffff;
-  color: #e41e3f;
+  background: var(--neon-lime);
+  color: var(--arcade-bg-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(125, 255, 138, 0.6);
+}
+
+.modal-button:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 @media screen and (max-width: 600px) {
@@ -100,7 +115,7 @@
   }
 
   .modal-title {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
   }
 
   .modal-message {
@@ -108,7 +123,7 @@
   }
 
   .modal-button {
-    font-size: 0.9rem;
+    font-size: 0.55rem;
     padding: 8px 16px;
     width: 100px;
   }

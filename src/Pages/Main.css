@@ -1,5 +1,5 @@
-*{
-  font-family: 'Pixelify Sans', serif;
+* {
+  font-family: var(--font-body);
 }
 body {
     margin: 0;
@@ -15,7 +15,8 @@ body {
   transform: translate(-50%,-30%);
   z-index: 0 !important;
   width: 70vw;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.088));
+  opacity: 0.35;
+  filter: drop-shadow(0 0 12px rgba(160, 101, 255, 0.25));
 }
 .modify{
   font-size: 1rem;
@@ -34,7 +35,7 @@ body {
 ::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;
-	background-color: #D62929;
+	background-color: var(--neon-violet);
 	background-image: -webkit-linear-gradient(90deg,
 											  transparent,
 											  rgba(0, 0, 0, 0.4) 50%,
