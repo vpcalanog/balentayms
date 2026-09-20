@@ -158,17 +158,17 @@ export function Content() {
           />
         ))}
 
-        <p className="wall-status" aria-live="polite">
+        {/* <p className="wall-status" aria-live="polite">
           {preview !== null
             ? "PAUSED — note focused"
             : isDrawing
             ? "PAUSED — drawing in progress"
             : `AUTO-REFRESH 60s — ${images.length} note${images.length === 1 ? "" : "s"} on the wall`}
-        </p>
+        </p> */}
       </section>
 
       <aside className="submit-panel" aria-label="Add a new note">
-        <h2 className="panel-title">Insert Coin</h2>
+        <h2 className="panel-title">Patch Notes</h2>
         <div className="template-controls">
           <div className="swatches" role="radiogroup" aria-label="Note template colour">
             {TEMPLATES.map((t) => (
@@ -184,13 +184,14 @@ export function Content() {
                 title={t.charAt(0).toUpperCase() + t.slice(1)}
               />
             ))}
+            
           </div>
         </div>
-        <Canvas
-          template={template}
-          onSubmitted={getImages}
-          onDrawingChange={handleDrawingChange}
-        />
+            <Canvas
+              template={template}
+              onSubmitted={getImages}
+              onDrawingChange={handleDrawingChange}
+            />
       </aside>
 
       {preview !== null && (

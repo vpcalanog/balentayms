@@ -317,9 +317,17 @@ function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
         </div>
         <div className="controls">
           <button onClick={toggleDraw}>
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
-            </svg>
+            {active
+              ?
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="#FF0000" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
+                </svg>
+              :
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
+                </svg>
+            }
+            
           </button>
           <label>Toggle Draw</label>
         </div>
@@ -399,13 +407,13 @@ function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.6-8.5h0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
       </button>
-      <div className="tooltip">
+      {/* <div className="tooltip">
           <p>Ctrl + C = Toggle Draw</p>
           <p>Middle Mouse = Toggle Size</p>
           <p>Ctrl + Shift + Z = Redo</p>
           <p>Ctrl + Y = Redo</p>
           <p>Ctrl + Z = Undo</p>
-        </div>
+        </div> */}
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
