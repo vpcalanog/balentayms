@@ -156,10 +156,6 @@ export function Local() {
     useEffect(() => {
         if (isPreloadedRef.current) return;
         isPreloadedRef.current = true;
-
-        appendImageToContent("logo.png");
-        appendImageToContent("logo.png");
-        appendImageToContent("logo.png");
     }, []);
 
     useEffect(() => {
