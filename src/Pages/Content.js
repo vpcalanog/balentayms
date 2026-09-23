@@ -1,13 +1,10 @@
-import { React, useCallback, useEffect, useRef, useState } from "react";
-import "./Content.css";
-import Canvas from "../Components/Canvas";
-import { listNotes, noteUrl } from "../services/noteStorage";
+import { useCallback, useEffect, useRef, useState } from "react";
 import logo from "../facts-logo.png";
+import { listNotes, noteUrl } from "../services/noteStorage";
+import "./Content.css";
 
-// The wall re-renders on this cadence, except while a note is being previewed
-// or a note is actively being drawn.
+// The wall re-renders on this cadence, except while a note is being previewed.
 const REFRESH_INTERVAL_MS = 60000;
-const TEMPLATES = ["red", "blue", "green", "yellow", "purple"];
 // Notes sit at a small random tilt, pinned-to-a-corkboard style.
 const MAX_TILT_DEG = 7;
 
@@ -96,14 +93,7 @@ export function Content() {
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState(null);
   const [imageProps, setImageProps] = useState({});
-  const [template, setTemplate] = useState("red");
-  const [isDrawing, setIsDrawing] = useState(false);
   const propsRef = useRef({});
-
-  // Stable identities keep the memoised Canvas from re-rendering on refresh.
-  const handleDrawingChange = useCallback((active) => {
-    setIsDrawing(active);
-  }, []);
 
   const getImages = useCallback(async () => {
     try {
@@ -121,15 +111,13 @@ export function Content() {
     getImages();
   }, [getImages]);
 
-  // Auto refresh every minute, suspended while a note is focused for preview
-  // and while a stroke is in progress, so the wall never shifts underneath the
-  // person looking at it or interrupts someone mid-drawing.
+  // Auto refresh every minute while a note is not being previewed.
   useEffect(() => {
-    if (preview !== null || isDrawing) return undefined;
+    if (preview !== null) return undefined;
 
     const intervalId = setInterval(getImages, REFRESH_INTERVAL_MS);
     return () => clearInterval(intervalId);
-  }, [preview, isDrawing, getImages]);
+  }, [preview, getImages]);
 
   return (
     <div className="arcade-shell">
@@ -158,41 +146,7 @@ export function Content() {
           />
         ))}
 
-        {/* <p className="wall-status" aria-live="polite">
-          {preview !== null
-            ? "PAUSED — note focused"
-            : isDrawing
-            ? "PAUSED — drawing in progress"
-            : `AUTO-REFRESH 60s — ${images.length} note${images.length === 1 ? "" : "s"} on the wall`}
-        </p> */}
-      </section>
-
-      <aside className="submit-panel" aria-label="Add a new note">
-        <h2 className="panel-title">Patch Notes</h2>
-        <div className="template-controls">
-          <div className="swatches" role="radiogroup" aria-label="Note template colour">
-            {TEMPLATES.map((t) => (
-              <button
-                key={t}
-                type="button"
-                role="radio"
-                aria-checked={template === t}
-                aria-label={`${t.charAt(0).toUpperCase() + t.slice(1)} template`}
-                className={`swatch ${template === t ? "selected" : ""}`}
-                data-color={t}
-                onClick={() => setTemplate(t)}
-                title={t.charAt(0).toUpperCase() + t.slice(1)}
-              />
-            ))}
-            
-          </div>
-        </div>
-            <Canvas
-              template={template}
-              onSubmitted={getImages}
-              onDrawingChange={handleDrawingChange}
-            />
-      </aside>
+        </section>
 
       {preview !== null && (
         <div className="zoom-bg" onClick={() => setPreview(null)}>

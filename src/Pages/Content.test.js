@@ -4,20 +4,6 @@ import { listNotes } from '../services/noteStorage';
 
 const REFRESH_MS = 60000;
 
-// The drawing canvas needs a real 2D context, which jsdom does not provide.
-// The stub exposes the drawing callback so the pause behaviour can be driven.
-let drawingChange;
-const canvasRenders = { count: 0 };
-jest.mock('../Components/Canvas', () => {
-  const { memo } = require('react');
-  // memo() mirrors the real component, so the test exercises the same
-  // bail-out the app relies on.
-  return memo((props) => {
-    canvasRenders.count += 1;
-    drawingChange = props.onDrawingChange;
-    return <div data-testid="canvas" />;
-  });
-});
 jest.mock('../services/noteStorage', () => ({
   listNotes: jest.fn(),
   noteUrl: (name) => `/api/notes/files/${name}`,
@@ -29,7 +15,6 @@ beforeEach(() => {
   jest.useFakeTimers();
   listNotes.mockReset();
   listNotes.mockResolvedValue(notes);
-  canvasRenders.count = 0;
 });
 
 afterEach(() => {
@@ -66,7 +51,7 @@ test('fetches once on mount and then every 60 seconds', async () => {
   expect(listNotes).toHaveBeenCalledTimes(3);
 });
 
-test('pauses while a note is focused and resumes once deselected', async () => {
+test('pauses auto-refresh while a note is focused and resumes once deselected', async () => {
   await mount();
   await waitFor(() => expect(listNotes).toHaveBeenCalledTimes(1));
 
@@ -75,9 +60,6 @@ test('pauses while a note is focused and resumes once deselected', async () => {
     note.click();
   });
 
-  expect(screen.getByText(/PAUSED — note focused/)).toBeInTheDocument();
-
-  // No refresh happens across three full cycles while the preview is open.
   await advance(REFRESH_MS * 3);
   expect(listNotes).toHaveBeenCalledTimes(1);
 
@@ -89,36 +71,11 @@ test('pauses while a note is focused and resumes once deselected', async () => {
   expect(listNotes).toHaveBeenCalledTimes(2);
 });
 
-test('pauses while a stroke is in progress and resumes when the pen lifts', async () => {
+test('does not render a submission panel on the wall page', async () => {
   await mount();
-  await waitFor(() => expect(listNotes).toHaveBeenCalledTimes(1));
 
-  await act(async () => {
-    drawingChange(true);
-  });
-  expect(screen.getByText(/PAUSED — drawing in progress/)).toBeInTheDocument();
-
-  await advance(REFRESH_MS * 3);
-  expect(listNotes).toHaveBeenCalledTimes(1);
-
-  await act(async () => {
-    drawingChange(false);
-  });
-
-  await advance(REFRESH_MS);
-  expect(listNotes).toHaveBeenCalledTimes(2);
-});
-
-test('does not re-render the canvas when the wall refreshes', async () => {
-  await mount();
-  const initial = canvasRenders.count;
-  expect(initial).toBeGreaterThan(0);
-
-  await advance(REFRESH_MS * 3);
-  expect(listNotes).toHaveBeenCalledTimes(4);
-
-  // Three refreshes went by without the drawing surface re-rendering.
-  expect(canvasRenders.count).toBe(initial);
+  expect(screen.queryByRole('heading', { name: /patch notes/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /submit/i })).not.toBeInTheDocument();
 });
 
 test('runs a single interval and clears it on unmount', async () => {
