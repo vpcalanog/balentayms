@@ -1,0 +1,76 @@
+/* Arcade design tokens shared by every screen.
+   The palette is sampled from the FACTS logo: crimson #a01010 (ring and
+   wordmark), bright red #e00000 (star highlight), dark maroon #301010 (star
+   shadow) and white. Neon variants are those hues pushed to arcade
+   brightness; white carries the high-contrast duties the logo gives it. */
+:root {
+  /* Sampled straight from the logo */
+  --logo-crimson: #a01010;
+  --logo-red: #e00000;
+  --logo-maroon: #301010;
+  --logo-white: #ffffff;
+
+  --arcade-bg: #180a0b;
+  --arcade-bg-deep: #0c0505;
+  --arcade-panel: rgba(38, 14, 15, 0.86);
+  --arcade-panel-solid: #1d0a0b;
+  --arcade-grid: rgba(224, 0, 0, 0.14);
+
+  /* Neon accents, all within the logo's red family */
+  --neon-red: #ff2b2b;
+  --neon-crimson: #d4232b;
+  --neon-ember: #ff7a45;
+  --neon-glow: #ff5a5a;
+
+  --text-primary: #ffeceb;
+  --text-muted: #d7a3a3;
+
+  --glow-red: 0 0 6px rgba(255, 43, 43, 0.85), 0 0 18px rgba(224, 0, 0, 0.5);
+  --glow-ember: 0 0 6px rgba(255, 122, 69, 0.85), 0 0 18px rgba(255, 122, 69, 0.4);
+  --glow-white: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 18px rgba(255, 160, 160, 0.45);
+
+  --font-display: 'Press Start 2P', 'Pixelify Sans', 'Courier New', monospace;
+  --font-body: 'Pixelify Sans', 'Segoe UI', system-ui, sans-serif;
+
+  --radius: 6px;
+  --speed: 160ms;
+}
+
+/* Pixel-crisp edges for the note artwork. */
+.pixel-edges {
+  image-rendering: pixelated;
+}
+
+/* Shared focus treatment: white, for maximum contrast on the red palette,
+   and always visible rather than colour-only. */
+:where(button, a, input, [role='radio']):focus-visible {
+  outline: 3px solid var(--logo-white);
+  outline-offset: 3px;
+}
+
+@keyframes arcade-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  94% { opacity: 0.72; }
+  96% { opacity: 1; }
+}
+
+@keyframes arcade-pulse {
+  0%, 100% { box-shadow: var(--glow-red); }
+  50% { box-shadow: 0 0 10px rgba(255, 43, 43, 1), 0 0 28px rgba(224, 0, 0, 0.6); }
+}
+
+@keyframes arcade-scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

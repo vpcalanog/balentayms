@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { memo, useEffect, useState, useRef } from "react";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { v4 as uuidv4 } from "uuid";
+import { saveNote } from '../services/noteStorage';
 import './Canvas.css';
 import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
@@ -12,14 +11,21 @@ import templateGreen from './template_green.png';
 import templateYellow from './template_yellow.png';
 import templatePurple from './template_purple.png';
 
-export default function Canvas({ template = 'red' }) {
+const MAX_CANVAS_SIZE = 500;
+const MIN_CANVAS_SIZE = 260;
+
+function Canvas({ template = 'red', onSubmitted, onDrawingChange }) {
   const { editor, onReady } = useFabricJSEditor();
   const fileInputRef = useRef(null);
+  const stageRef = useRef(null);
+  const drawingChangeRef = useRef(onDrawingChange);
+  const [canvasSize, setCanvasSize] = useState(MAX_CANVAS_SIZE);
+
+  drawingChangeRef.current = onDrawingChange;
   const history = [];
   const [color, setColor] = useState("#35363a");
   const [active, setActive] = useState(false);
   const [size, setSize] = useState('');
-  const supabase = useSupabaseClient();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
@@ -58,6 +64,32 @@ export default function Canvas({ template = 'red' }) {
 
     return () => {
       document.removeEventListener('auxclick', handleAuxClick);
+    };
+  }, [editor]);
+
+  // Tells the parent when a stroke is in progress, so the notes wall can hold
+  // its refresh until the pen is lifted.
+  useEffect(() => {
+    if (!editor || !editor.canvas) {
+      return undefined;
+    }
+
+    const canvas = editor.canvas;
+    const report = (active) => {
+      if (typeof drawingChangeRef.current === 'function') {
+        drawingChangeRef.current(active);
+      }
+    };
+    const onDown = () => report(true);
+    const onUp = () => report(false);
+
+    canvas.on('mouse:down', onDown);
+    canvas.on('mouse:up', onUp);
+
+    return () => {
+      canvas.off('mouse:down', onDown);
+      canvas.off('mouse:up', onUp);
+      report(false);
     };
   }, [editor]);
 
@@ -129,12 +161,8 @@ export default function Canvas({ template = 'red' }) {
     const templateImagePath = templateImages[template] || templateRed;
 
     fabric.Image.fromURL(templateImagePath, (image) => {
-      const screenWidth = window.innerWidth;
-
-      if (screenWidth < 600) {
-        image.scaleToWidth(470);
-        image.scaleToHeight(470);
-      }
+      image.scaleToWidth(canvasSize);
+      image.scaleToHeight(canvasSize);
 
       editor.canvas.setBackgroundImage(
         image,
@@ -143,15 +171,40 @@ export default function Canvas({ template = 'red' }) {
     });
   };
 
+  // The canvas keeps a square aspect and tracks the width of its container so
+  // it fits the submission panel on any breakpoint.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) {
+      return undefined;
+    }
+
+    const measure = () => {
+      const available = stage.clientWidth;
+      if (!available) return;
+      const next = Math.round(
+        Math.max(MIN_CANVAS_SIZE, Math.min(MAX_CANVAS_SIZE, available))
+      );
+      setCanvasSize((current) => (current === next ? current : next));
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     if (!editor || !fabric) {
       return;
     }
-    editor.canvas.setHeight(500);
-    editor.canvas.setWidth(500);
+    editor.canvas.setHeight(canvasSize);
+    editor.canvas.setWidth(canvasSize);
     addBackground();
     editor.canvas.renderAll();
-  }, [editor, template]);
+  }, [editor, template, canvasSize]);
 
   const toggleSize = () => {
     if(editor.canvas.freeDrawingBrush.width === 10){
@@ -202,54 +255,6 @@ export default function Canvas({ template = 'red' }) {
     editor.addText("insert text");
   };
 
-  async function logImages(logs){
-    const newLog = {
-        name: logs,
-    }
-    const { data,error } = await supabase
-    .from('entries')
-    .insert(newLog)
-    .select()
-
-    if (error) {
-        console.log(error)
-    }
-    if (data) {
-        console.log(data)
-    }
-  };
-
-  // const saveToImage = async () => {
-  //   const isConfirmed = window.confirm("Are you sure you want to submit the canvas?");
-    
-  //   if (isConfirmed) {
-  //     if (!editor || !fabric) {
-  //       return;
-  //     }
-  
-  //     const dataURL = editor.canvas.toDataURL({
-  //       format: "png",
-  //       multiplier: 2,
-  //     });
-  
-  //     const blob = await fetch(dataURL).then((res) => res.blob());
-  //     const uid = uuidv4();
-  
-  //     const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
-  
-  //     if (data) {
-  //       // alert("Your note has been submitted, please wait as the administrators review your message");
-  //       toast.success("Your note has been submitted, please wait as the administrators review your message");
-  //       logImages(uid);
-  //       clear();
-  //     } else {
-  //       console.error("Error uploading image:", error);
-  //     }
-  //   } else {
-  //     // console.log("Submission canceled.");
-  //     toast.error("Submission canceled.");
-  //   }
-    
   const saveToImage = async () => {
     setConfirmModalOpen(true);
   };
@@ -258,24 +263,26 @@ export default function Canvas({ template = 'red' }) {
     if (!editor || !fabric) {
       return;
     }
-  
+
     const dataURL = editor.canvas.toDataURL({
       format: "png",
       multiplier: 2,
     });
-  
+
     const blob = await fetch(dataURL).then((res) => res.blob());
-    const uid = uuidv4();
-  
-    const { data, error } = await supabase.storage.from('Notes').upload(`valentines/${uid}`, blob);
-  
-    if (data) {
-      toast.success("Your note has been submitted, please wait as the administrators review your message");
-      logImages(uid);
+
+    try {
+      await saveNote(blob);
+      toast.success("Your note is up on the wall!");
       clear();
-    } else {
-      console.error("Error uploading image:", error);
+      if (typeof onSubmitted === 'function') {
+        onSubmitted();
+      }
+    } catch (error) {
+      console.error("Error saving note:", error);
+      toast.error("Your note could not be saved. Please try again.");
     }
+
     setConfirmModalOpen(false);
   };
 
@@ -302,17 +309,25 @@ export default function Canvas({ template = 'red' }) {
   return (
     <div className="canvas">
       <div className="side">
-        <div className="controls">
+        {/* <div className="controls">
           <button onClick={addText}>
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 8 8" id="text"><path d="M0 0v2h.5c0-.55.45-1 1-1H3v5.5c0 .28-.22.5-.5.5H2v1h4V7h-.5c-.28 0-.5-.22-.5-.5V1h1.5c.55 0 1 .45 1 1H8V0H0z"></path></svg>
           </button>
           <label>Add Text</label>
-        </div>
+        </div> */}
         <div className="controls">
           <button onClick={toggleDraw}>
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
-            </svg>
+            {active
+              ?
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="#FF0000" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
+                </svg>
+              :
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4c0-.6-.4-1-1-1H9a1 1 0 0 0-.8.3l-4 4a1 1 0 0 0-.2.6V20c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-5M9 3v4c0 .6-.4 1-1 1H4m11.4.8 2.7 2.7m1.2-3.9a2 2 0 0 1 0 3l-6.6 6.6L9 18l.7-3.7 6.7-6.7a2 2 0 0 1 3 0Z"/>
+                </svg>
+            }
+            
           </button>
           <label>Toggle Draw</label>
         </div>
@@ -344,7 +359,7 @@ export default function Canvas({ template = 'red' }) {
         <label>Select Color</label>
         </div>
       </div>
-      <div className="center">
+      <div className="center" ref={stageRef}>
         <FabricJSCanvas className="sample-canvas" onReady={onReady} />
       </div>
       <div className="side">
@@ -387,19 +402,19 @@ export default function Canvas({ template = 'red' }) {
         style={{ display: "none" }}
         onChange={(e) => handleFileInputChange(e)}
       />
-      <button className='info' onClick={toggleModal}>
+      {/* <button className='info' onClick={toggleModal}>
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.6-8.5h0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
-      </button>
-      <div className="tooltip">
+      </button> */}
+      {/* <div className="tooltip">
           <p>Ctrl + C = Toggle Draw</p>
           <p>Middle Mouse = Toggle Size</p>
           <p>Ctrl + Shift + Z = Redo</p>
           <p>Ctrl + Y = Redo</p>
           <p>Ctrl + Z = Undo</p>
-        </div>
-      {isModalOpen && (
+        </div> */}
+      {/* {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
             <h1>Rules and Guidelines</h1>
@@ -423,7 +438,7 @@ export default function Canvas({ template = 'red' }) {
             </ul>
           </div>
         </div>
-      )}
+      )} */}
       <ConfirmModal 
         isOpen={isConfirmModalOpen}
         onConfirm={handleConfirmSubmit}
@@ -436,3 +451,6 @@ export default function Canvas({ template = 'red' }) {
     </div>
   );
 }
+
+// Memoised so a notes-wall refresh never re-renders the drawing surface.
+export default memo(Canvas);
