@@ -27,7 +27,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
+    "export-notes": "node scripts/export-notes.js"
   },
   "eslintConfig": {
     "extends": [

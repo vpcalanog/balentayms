@@ -41,6 +41,21 @@ next refresh; admins can hide one from `/administrasyones`.
 | `POST` | `/api/notes` | Submit a note (raw `image/png` body) |
 | `PATCH` | `/api/notes/:id` | Update `status` / `updated_by` (moderation) |
 
+## Static hosting (Vercel)
+
+Production builds set `REACT_APP_STATIC_NOTES=true` (see `.env.production`),
+so the wall reads a snapshot from `public/notes/` instead of the notes API —
+no server needed. The snapshot is display-only: submitting and moderating are
+disabled.
+
+```bash
+npm run export-notes   # copy approved notes from ./local-notes into public/notes
+git add public/notes && git commit -m "Update notes snapshot"
+```
+
+Push to trigger a Vercel deploy (framework preset: Create React App).
+`vercel.json` rewrites unknown paths to `index.html` so client routes work.
+
 Supabase is still used for admin sign-in only; it no longer handles note
 storage.
 
