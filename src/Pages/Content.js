@@ -119,34 +119,52 @@ export function Content() {
     return () => clearInterval(intervalId);
   }, [preview, getImages]);
 
+  // If the viewport is small, render a simple responsive grid instead of the
+  // absolute-positioned wall which doesn't fit well on mobile/tablet.
+  const isSmallScreen = typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(max-width: 820px)').matches
+    : false;
+
   return (
     <div className="arcade-shell">
-      <section className="content" aria-label="Notes wall">
+      <section className={`content ${isSmallScreen ? 'compact' : 'wall'}`} aria-label="Notes wall">
         <div className="scanlines" aria-hidden="true" />
         <div className="logo-container">
           <img src={logo} alt="FACTS Logo" className="center-logo" />
         </div>
 
-        {images.map((image) => (
-          <img
-            key={image.id}
-            className="notes"
-            src={noteUrl(image.name)}
-            style={{
-              left: `${imageProps[image.id]?.x}%`,
-              top: `${imageProps[image.id]?.y}%`,
-              position: "absolute",
-              transform: `translate(-50%, -50%) rotate(${
-                imageProps[image.id]?.rotation ?? 0
-              }deg) scale(${imageProps[image.id]?.scale ?? 1})`,
-              zIndex: imageProps[image.id]?.depth ?? 1,
-            }}
-            onClick={() => setPreview(image.name)}
-            alt="Note"
-          />
-        ))}
+        {isSmallScreen ? (
+          <div className="notes-grid" aria-live="polite">
+            {images.map((image) => (
+              <button
+                key={image.id}
+                className="note-card"
+                onClick={() => setPreview(image.name)}
+              >
+                <img src={noteUrl(image.name)} alt={image.title || 'Note'} />
+              </button>
+            ))}
+          </div>
+        ) : (
+          images.map((image) => (
+            <img
+              key={image.id}
+              className="notes"
+              src={noteUrl(image.name)}
+              style={{
+                left: `${imageProps[image.id]?.x}%`,
+                top: `${imageProps[image.id]?.y}%`,
+                position: 'absolute',
+                transform: `translate(-50%, -50%) rotate(${imageProps[image.id]?.rotation ?? 0}deg) scale(${imageProps[image.id]?.scale ?? 1})`,
+                zIndex: imageProps[image.id]?.depth ?? 1,
+              }}
+              onClick={() => setPreview(image.name)}
+              alt="Note"
+            />
+          ))
+        )}
 
-        </section>
+      </section>
 
       {preview !== null && (
         <div className="zoom-bg" onClick={() => setPreview(null)}>

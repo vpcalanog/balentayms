@@ -85,6 +85,8 @@ export function Admin(props) {
         if (update.length !== 0) {
             changeStatus();
         }
+        // Only toggle when a new status change is requested, not on every render.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [update]);
 
     return (
